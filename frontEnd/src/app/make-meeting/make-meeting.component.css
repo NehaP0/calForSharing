@@ -100,3 +100,19 @@
     color: #cf6868;
   }
  
+
+
+
+  @media (max-width: 780px){
+    #content { 
+      display: block;
+      height: 100%;
+
+    }
+    #leftDiv {
+      width: 100%;
+    }
+  } 
+
+
+
