@@ -12,11 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class MakeMeetingComponent implements OnInit {
   constructor(private apiService: APIService, private router: Router) {}
 
-  ngOnInit() {
-    if (this.evType == 'One-on-One') {
-      this.oneOnOne = true;
-    }
-  }
+
 
   nameWhoseCalendar = localStorage.getItem('nameWhoseCalendar');
   evName = localStorage.getItem('evName');
@@ -28,7 +24,8 @@ export class MakeMeetingComponent implements OnInit {
   day = localStorage.getItem('day');
   month = localStorage.getItem('month');
   date = localStorage.getItem('date');
-
+  allowInviteesToAddGuestsStr = localStorage.getItem('allowInviteesToAddGuests')
+  allowInviteesToAddGuests;
   nameBlank = false;
   emailBlank = false;
   addGuests = false;
@@ -36,6 +33,20 @@ export class MakeMeetingComponent implements OnInit {
   oneOnOne = false;
   wait = false
   
+  ngOnInit() {
+    if (this.evType == 'One-on-One') {
+      this.oneOnOne = true;
+    }
+    
+    if(this.allowInviteesToAddGuestsStr=="true"){
+      this.allowInviteesToAddGuests = true
+    }
+    else if(this.allowInviteesToAddGuestsStr=="false"){
+      this.allowInviteesToAddGuests = false
+    }
+    
+  }
+
 
   addguests() {
     this.addGuests = true;

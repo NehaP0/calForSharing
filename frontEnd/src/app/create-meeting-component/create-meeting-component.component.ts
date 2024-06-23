@@ -28,6 +28,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   evDurHrs = 0
   evDurMins = 0
   evLocation = localStorage.getItem("eventLocation")
+  allowInviteesToAddGuests = true
   evType = ""
   // meetingArray : any[] = [];
   formattedMeetingsHide: object[] = [];
@@ -173,7 +174,11 @@ export class CreateMeetingComponentComponent implements OnInit {
         this.image = image;
         this.avatar = `${this.API_URL}/${image}`
       }); 
-
+      this.subscription = this.apiService.allowInviteesToAddGuests$.subscribe((allowInviteesToAddGuests) => {
+        console.log('allowInviteesToAddGuests in ts :', allowInviteesToAddGuests);
+        this.allowInviteesToAddGuests = allowInviteesToAddGuests;
+      });
+      // localStorage.setItem('allowInviteesToAddGuests', event.allowInviteesToAddGuests);
 
 
 
@@ -832,6 +837,8 @@ export class CreateMeetingComponentComponent implements OnInit {
     localStorage.setItem("date", this.dateSelected)
     localStorage.setItem("month", this.selectedMonth)
     localStorage.setItem("evType", this.evType)
+    localStorage.setItem("allowInviteesToAddGuests", this.allowInviteesToAddGuests)
+
 
     console.log(oneTime[0], oneTime[1], oneTime[3], oneTime[4]);
 

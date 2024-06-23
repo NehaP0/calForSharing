@@ -86,6 +86,7 @@ export class APIService {
     private avatarSubject = new BehaviorSubject<string>('');
       // this.avatar = `${this.API_URL}/${params['image']}`
 
+    private allowInviteesToAddGuestsSubject = new BehaviorSubject<boolean>(true)
 
       public name$ = this.nameSubject.asObservable();;
       // const name = params['name'];
@@ -155,6 +156,9 @@ export class APIService {
   public meetingPollDetails$ = this.meetingPollDetailsSubject.asObservable();
   public votingLink$ = this.votingLinkSubject.asObservable();
   public votingArr$ = this.votingArrSubject.asObservable();
+  public allowInviteesToAddGuests$ = this.allowInviteesToAddGuestsSubject.asObservable();
+
+
 
   API_URL = 'http://localhost:3000';
 
@@ -711,7 +715,8 @@ export class APIService {
       this.evNameSubject.next(reqEvent.evName)
       this.evDurMinsSubject.next(Number(reqEvent.evDuration.minutes))
       this.evDurHrsSubject.next(Number(reqEvent.evDuration.hrs))
-      
+      this.allowInviteesToAddGuestsSubject.next(reqEvent.allowInviteesToAddGuests)
+
 // emailID:"nehaphadtare334@gmail.com"
 // events: [{…}]
 // meetingsWtOthers: [{…}]

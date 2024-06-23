@@ -1,5 +1,6 @@
 <!-- <app-navbar></app-navbar> -->
 
+
 <div id="main">
     <div *ngIf="wait" id="waitBox"><h3>Please wait...</h3></div>
     <div id="content">
@@ -43,8 +44,8 @@
           <input type="email" id="Email" name="Email" ngModel required />
           <p *ngIf="emailBlank" class="warning">Can't be blank.</p>
   
-          <div *ngIf="!oneOnOne" id="addGuestsDiv">
-            <button id="addGuests" (click)="addguests()" type="button">
+          <div id="addGuestsDiv" *ngIf="allowInviteesToAddGuests">
+            <button  id="addGuests" *ngIf="!addGuests" (click)="addguests()" type="button">
               Add Guests
             </button>
             <div id="guests">
@@ -62,10 +63,10 @@
             </p>
           </div>
   
-          <!-- <label for="additional"
+          <label for="additional"
             >Please share anything that will help prepare for our meeting.</label
           >
-          <input type="text" id="additional" name="additional" ngModel /> -->
+          <input type="text" id="additional" name="additional" ngModel />
   
           <button id="scheduleEvent" type="submit">Schedule Event</button>
         </form>
