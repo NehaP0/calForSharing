@@ -87,6 +87,9 @@ export class APIService {
       // this.avatar = `${this.API_URL}/${params['image']}`
 
     private allowInviteesToAddGuestsSubject = new BehaviorSubject<boolean>(true)
+    private reqEventSubject = new BehaviorSubject<object>({});
+    private cloduraBrandingReqSubject = new BehaviorSubject<boolean>
+
 
       public name$ = this.nameSubject.asObservable();;
       // const name = params['name'];
@@ -157,6 +160,9 @@ export class APIService {
   public votingLink$ = this.votingLinkSubject.asObservable();
   public votingArr$ = this.votingArrSubject.asObservable();
   public allowInviteesToAddGuests$ = this.allowInviteesToAddGuestsSubject.asObservable();
+  public reqEvent$ = this.reqEventSubject.asObservable()
+  public cloduraBrandingReq$ = this.cloduraBrandingReqSubject.asObservable()
+
 
 
 
@@ -202,6 +208,20 @@ export class APIService {
 
     console.log('userLoggedIn api service ts', this.userLoggedIn$);
     return this.httpClient.post(`${this.API_URL}/user/login`, user);
+  }
+
+  async getParticularUser(emailId){
+    const response = await this.httpClient.get(`${this.API_URL}/user/getParticularUser?userEmailId=${emailId}`, {
+      headers: {
+        // Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }).toPromise();;
+
+    console.log("got user ", response['user']);
+    let user = response['user']
+    this.cloduraBrandingReqSubject.next(user['cloduraBranding'])
+    return response['user']   
   }
 
 
@@ -370,15 +390,32 @@ export class APIService {
       //   end: meeting.end,
       // }));
 
-      for (let j = 0; j < meetingsArr.length; j++) {
-        let oneMeetObj = {
-          Id: meetingsArr[j]._id,
-          // title: "Unavailable",
-          // title: "",
-          start: meetingsArr[j].start,
-          end: meetingsArr[j].end,
-        };
-        meetings.push(oneMeetObj);
+      
+
+      if(user.events[i].evType=="Group"){
+        for (let j = 0; j < meetingsArr.length; j++) {
+          let oneMeetObj = {
+            Id: meetingsArr[j]._id,
+            // title: "Unavailable",
+            // title: "",
+            start: meetingsArr[j].start,
+            end: meetingsArr[j].end,
+            bookedForWhichEvId : meetingsArr[j].bookedForWhichEvId
+          };
+          meetings.push(oneMeetObj);
+        }
+      }
+      else{
+        for (let j = 0; j < meetingsArr.length; j++) {
+          let oneMeetObj = {
+            Id: meetingsArr[j]._id,
+            // title: "Unavailable",
+            // title: "",
+            start: meetingsArr[j].start,
+            end: meetingsArr[j].end,
+          };
+          meetings.push(oneMeetObj);
+        }
       }
 
       // meetings = [...meetings, formattedMeetingsHide]
@@ -733,4 +770,28 @@ export class APIService {
       
     }
   }
+
+  async getSelectedEvent(evId, loggedInEmailId){
+    console.log("getSelectedEvent called in api ", evId, loggedInEmailId);
+    
+     let reqEvent = {}
+     let response = await this.httpClient
+     .get(`${this.API_URL}/event/getParticularEvent/${loggedInEmailId}/${evId}`)
+     .toPromise();
+     console.log("sending response ", response);
+     
+     
+     if(response['message'] == "Found"){
+       reqEvent = response['reqEvent']
+       console.log("reqEvent ", reqEvent);
+       this.reqEventSubject.next(reqEvent) 
+     }
+     else{
+       console.log(response['message']);
+       
+     }
+   }
+
+
+
 }

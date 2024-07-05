@@ -2,19 +2,24 @@
     /* background-color: black;
     color: green; */
     font-size: 17px;
+    font-family: sans-serif;
 }
+
 #parentDiv {
     height: 150vh;
+    position: relative;
 }
-#avatarDiv{
+
+#avatarDiv {
     margin-bottom: 10px;
-    width:100px;
-    height:100px;
+    width: 100px;
+    height: 100px;
     margin: auto;
 }
-#avatarDiv>img{
-    width:100%;
-    height:100%
+
+#avatarDiv>img {
+    width: 100%;
+    height: 100%
 }
 
 /* .container{
@@ -26,17 +31,20 @@ full-calendar {
     /* margin: auto; */
     /* border: 1px solid blue; */
 }
-::ng-deep #calendar .fc-day-past a.fc-daygrid-day-number{
+
+::ng-deep #calendar .fc-day-past a.fc-daygrid-day-number {
     /* background-color: red; */
     color: grey !important;
     /* border: 1px solid red; */
 }
-::ng-deep #calendar a.fc-daygrid-day-number{
+
+::ng-deep #calendar a.fc-daygrid-day-number {
     font-size: 15px !important;
     font-weight: bold !important;
     font-family: sans-serif;
 }
-::ng-deep #calendar a.fc-daygrid-day-number:hover{
+
+::ng-deep #calendar a.fc-daygrid-day-number:hover {
     cursor: pointer;
 }
 
@@ -53,18 +61,20 @@ full-calendar {
     justify-content: space-between;
     /* height: 100vh; */
 }
-#times{
+
+#times {
     margin: auto;
     /* border: 1px solid red; */
-    width:80%;
+    width: 80%;
     /* overflow:scroll; */
-    overflow-x:hidden;
+    overflow-x: hidden;
     /* overflow-y: auto; */
     height: calc(100% - 1px);
     /* height: 100%; */
     margin-top: 40px;
 }
-.oneTime{
+
+.oneTime {
     width: 100%;
     height: 50px;
     border: 1px solid #0060E6;
@@ -73,7 +83,9 @@ full-calendar {
     border-radius: 5px;
     margin-bottom: 20px;
 }
-.oneTimeHidden, .nextBtn{
+
+.oneTimeHidden,
+.nextBtn {
     width: 48%;
     height: 50px;
     border: 1px solid #0060E6;
@@ -82,18 +94,21 @@ full-calendar {
     border-radius: 5px;
     margin-bottom: 20px;
 }
-.oneTimeHidden{
+
+.oneTimeHidden {
     margin-right: 4%;
     background-color: grey;
     border: none;
     color: white;
 }
-#timeLeftDIv{
+
+#timeLeftDIv {
     /* border: 1px solid blue; */
     width: 100%;
     height: 100vh;
 }
-.nextBtn{
+
+.nextBtn {
     background-color: #0060E6;
     color: white;
 }
@@ -135,8 +150,7 @@ full-calendar {
     height: 100%;
     margin: auto;
     border-radius: 5px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     overflow: hidden;
 }
 
@@ -255,7 +269,8 @@ ng-icon {
     /* width: 1000%; */
 
 }
-#divForCalendarAndTime{
+
+#divForCalendarAndTime {
     display: flex;
     justify-content: center;
 }
@@ -265,24 +280,26 @@ ng-icon {
 /* -------MontCalendar starts------------- */
 
 
-::ng-deep #calendar .fc-toolbar-title{
+::ng-deep #calendar .fc-toolbar-title {
     font-size: 15px;
 }
-::ng-deep #calendar .fc-button{
+
+::ng-deep #calendar .fc-button {
     background-color: #dddddd;
     color: black;
     padding: 0px;
     border: none;
     font-size: 10px;
 }
-::ng-deep #calendar a.fc-daygrid-day-number{
-    font-weight:500;
-    font-size: 14px;  
+
+::ng-deep #calendar a.fc-daygrid-day-number {
+    font-weight: 500;
+    font-size: 14px;
     color: #0060E6;
 }
 
 
-::ng-deep a{
+::ng-deep a {
     color: rgb(12, 12, 12);
     text-decoration: none;
     /* font-weight:300;
@@ -290,6 +307,7 @@ ng-icon {
     font-size: 13px;
     font-weight: 400;
 }
+
 /* ::ng-deep #monthCalendar .fc-event-title-container{
     display: none;
 }
@@ -299,19 +317,84 @@ ng-icon {
 } */
 
 /* -------MontCalendar ends--------- */
+/* ====================================== */
+
+#noTimesAv {
+    background-color: rgb(234, 234, 255);
+    padding: 5px;
+    border-radius: 5px;
+    /* font-size: 10px; */
+}
+
+#noTimesAv>:nth-child(1) {
+    font-weight: bold;
+}
+
+#spotsLeft {
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+
+
+.powered-by-badge {
+    position: absolute;
+    top: 35px;
+    right: 16%;
+    z-index: 1;
+    width: 200px;
+    height: 40px; 
+    background-color: #505960;
+    color: #fff;
+    /* box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px; */
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    pointer-events: auto;
+    transition: all .1s ease-in;
+    transform: rotate(45deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    clip-path: polygon(23% 0%, 77% 0%, 100% 100%, 0% 100%);
+}
+
+#poweredBy{
+    font-size: 12px;
+}
+
+/* position: relative;
+top: 21px;
+left: -11px;
+z-index: 1;
+display: block;
+width: 160px;
+padding: 9px 0 6px;
+background-color: #505960;
+color: #fff;
+box-shadow: 0 2px 4px 0 rgb(0 0 0 / 20%);
+font-weight: 700;
+line-height: 1.2;
+text-align: center;
+text-decoration: none;
+pointer-events: auto;
+transition: all .1s ease-in;
+transform: rotate(45deg); */
 
 
 
 
 
-@media (max-width: 780px){
+@media (max-width: 780px) {
     #eventDeets {
         width: 80%;
     }
 }
 
 
-@media (max-width: 575px){
+@media (max-width: 575px) {
     #eventDeets {
         width: 90%;
     }
