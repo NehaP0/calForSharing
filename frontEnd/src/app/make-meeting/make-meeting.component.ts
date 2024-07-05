@@ -29,6 +29,7 @@ export class MakeMeetingComponent implements OnInit {
   lastNameRequired = JSON.parse(localStorage.getItem('lastNameRequired'))
   allowInviteesToAddGuestsStr = localStorage.getItem('allowInviteesToAddGuests')
   allowInviteesToAddGuests;
+  redirectTo = JSON.parse(localStorage.getItem("redirectTo"))
   nameBlank = false;
   emailBlank = false;
   addGuests = false;
@@ -160,12 +161,19 @@ export class MakeMeetingComponent implements OnInit {
           this.apiService
             .scheduleMeetBymakeMeetingPage(meet)
             .subscribe((response) => {
+              this.wait = false
               console.log(response);
               console.log("wait after result ", this.wait);
     
-              this.wait = false
               alert(response['message']);
-              this.router.navigate(['/thankyou']);
+              if(this.redirectTo.confirmationPage.status == true){
+                this.router.navigate(['/thankyou']);
+              }
+              else{
+                let link = this.redirectTo.externalUrl.link
+                window.location.href = link
+                // this.router.navigate(link);
+              }
     
               // if(response['message'] == "You are scheduled. A calendar invitation has been sent to your email address."){
               // }

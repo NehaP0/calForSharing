@@ -27,6 +27,7 @@
         <div>
           <ng-icon name="bootstrapClock"></ng-icon>
           <span *ngIf="evDurHrs">{{evDurHrs}}</span><span *ngIf="evDurHrs"> hrs </span>
+          &nbsp; <!--  for space -->
           <span *ngIf="evDurMins">{{evDurMins}} </span> <span *ngIf="evDurMins"> mins </span>
           <!-- <p>{{"" || "15 mins"}}</p> -->
         </div>
@@ -72,7 +73,7 @@
               <button class="nextBtn" [hidden]="showNextFor!=oneTime"
                 (click)="nextButton(evName, evDurHrs, evDurMins, oneTime)">Next</button>
             </div>
-            <div id="noTimesAv" *ngIf="!userAvailaibleArray.length">                        
+            <div id="noTimesAv" *ngIf="userAvailaibleArray.length == 0">                        
               <p>No times available on {{dateSelected}}</p>
               <p>Please select another date.</p>
             </div>

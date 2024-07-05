@@ -122,6 +122,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   meetingsOfOnlyThisEvent
   eventN = ''
   eventLink = ''
+  redirectTo = {}
 
   // NEW END====
 
@@ -261,7 +262,8 @@ export class CreateMeetingComponentComponent implements OnInit {
           this.allowInviteesToAddGuests = reqEventObj["allowInviteesToAddGuests"]
           this.evType = reqEventObj["evType"]
           this.lastNameRequired = reqEventObj["surnameReq"]
-          
+          this.redirectTo = reqEventObj["redirectTo"]
+
           if (reqEventObj["evType"] == "Group") {
             this.noOfBookingsAllowedForAParticularTimeInGrpEvent = reqEventObj["maxInviteesPerEventForGrpEvent"]
             this.displayRemainingSpotsOnBookingPageGrp = reqEventObj["displayRemainingSpotsOnBookingPageGrp"]
@@ -928,6 +930,7 @@ export class CreateMeetingComponentComponent implements OnInit {
 
   onDateClick(res: any) {
 
+    this.displayTimeDiv = true
     console.log('Clicked on date : ' + res.dateStr); //2024-02-13
 
 
@@ -1146,8 +1149,8 @@ export class CreateMeetingComponentComponent implements OnInit {
             console.log("workingStartMinutes 288 ", workingStartMinutes, typeof workingStartMinutes);
 
             if (workingStartMinutes >= 60) {
-              workingStartHours = workingStartHours + Math.abs(workingStartMinutes / 60)
-              workingStartMinutes = workingStartMinutes - 60 * (Math.abs(workingStartMinutes / 60))
+              workingStartHours = workingStartHours + Math.floor(workingStartMinutes / 60)
+              workingStartMinutes = workingStartMinutes - 60 * (Math.floor(workingStartMinutes / 60))
             }
 
             // console.log("workingStartHours 295 ",workingStartHours, typeof workingStartHours);
@@ -1420,11 +1423,12 @@ export class CreateMeetingComponentComponent implements OnInit {
 
             console.log("this.userAvailaibleArray ", this.userAvailaibleArray);
           }
-
-
-        }
-      }
-    }
+          
+          
+          
+          }
+          }
+          }
   }
 
   // ---------------onDateClick new ends---------------
@@ -1870,7 +1874,8 @@ export class CreateMeetingComponentComponent implements OnInit {
     localStorage.setItem("evType", this.evType)
     localStorage.setItem("allowInviteesToAddGuests", this.allowInviteesToAddGuests)
     localStorage.setItem("lastNameRequired", this.lastNameRequired)
-
+    localStorage.setItem('redirectTo', JSON.stringify(this.redirectTo))
+  
     console.log(oneTime[0], oneTime[1], oneTime[3], oneTime[4]);
 
     let hrs = Number(oneTime[0] + oneTime[1]) //09
@@ -1886,8 +1891,8 @@ export class CreateMeetingComponentComponent implements OnInit {
     console.log("endTimeHrs ", endTimeHrs, "endTimeMins ", endTimeMins);
 
     if (endTimeMins >= 60) {
-      endTimeHrs = endTimeHrs + Math.abs(endTimeMins / 60)
-      endTimeMins = endTimeMins - 60 * (Math.abs(endTimeMins / 60))
+      endTimeHrs = endTimeHrs + Math.floor(endTimeMins / 60)
+      endTimeMins = endTimeMins - 60 * (Math.floor(endTimeMins / 60))
     }
 
     console.log("endTimeHrs ", endTimeHrs, "endTimeMins ", endTimeMins);
@@ -1933,7 +1938,6 @@ export class CreateMeetingComponentComponent implements OnInit {
 
 
     localStorage.setItem("endTime", endTime)
-    // console.log("navigating to /makeMeeting");
     this.router.navigate(['/makeMeeting'])
 
   }
