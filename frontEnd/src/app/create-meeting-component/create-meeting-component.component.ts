@@ -19,11 +19,12 @@ export class CreateMeetingComponentComponent implements OnInit {
   currentDate: Date;
   currentformattedDate
 
-
+  user;
   userName: string = '';
   emailId: string = '';
   loggedInName = localStorage.getItem("userLoggedInName" || "")
   evId = ""
+  userId = ""
 
   evName = ""
   evDurHrs = 0
@@ -36,6 +37,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   timeSelected = "";
   eventName = "";
   eventDesc = "";
+  evLinkEnd = ""
   loading = false
   selectedUserAvObj = {}
   nameWhoseCalendar = ""
@@ -48,7 +50,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   dateSelected = ""
   selectedDayName = ""
   selectedMonth = ""
-  userAvailaibleArray= []
+  userAvailaibleArray = []
   Events: any[] = [];
   allTimesArray = []
   showNext = false
@@ -56,6 +58,10 @@ export class CreateMeetingComponentComponent implements OnInit {
 
   workingHrStart = ""
   workingHrEnd = ""
+
+  backGroundcolor: string = ""
+  textColor: string = ""
+  btnAndLinkColor: string = ""
 
   avatar = ""
   image = ""
@@ -127,14 +133,14 @@ export class CreateMeetingComponentComponent implements OnInit {
   // NEW END====
 
   constructor(private apiService: APIService, private route: ActivatedRoute, private router: Router, private datePipe: DatePipe) {
-    this.subscription = this.apiService.userName$.subscribe((userName) => {
-      this.userName = userName;
-      console.log(userName)
-    });
-    this.subscription = this.apiService.emailId$.subscribe((emailId) => {
-      this.emailId = emailId;
-      console.log(emailId)
-    });
+    // this.subscription = this.apiService.userName$.subscribe((userName) => {
+    //   this.userName = userName;
+    //   console.log(userName)
+    // });
+    // this.subscription = this.apiService.emailId$.subscribe((emailId) => {
+    //   this.emailId = emailId;
+    //   console.log("emailId in custructor ",emailId)
+    // });
   }
 
   private subscription: Subscription;
@@ -145,174 +151,13 @@ export class CreateMeetingComponentComponent implements OnInit {
   ngOnInit() {
     // -----taking name and email id from query paramaters----
     this.route.queryParams.subscribe(params => {
-      const userId = params['userId']
-      console.log('Create Meeting Component initialized ', userId);
-      const eventId = params['eventId']
-      this.evId = eventId
-      localStorage.setItem("eventId", this.evId)
+      this.userId = params['uid']
+      console.log('Create Meeting Component initialized ', this.userId);
 
-      // Fetch meetings when component initializes
-      this.apiService.getReqDetails(userId, eventId)
-
-      // ===========================================
-
-
-
-      // const name = params['name'];
-      // this.nameWhoseCalendar = name
-      this.subscription = this.apiService.name$.subscribe((name) => {
-        console.log('Name in ts :', name);
-        this.nameWhoseCalendar = name;
-      });
-      this.apiService.setUserName(this.nameWhoseCalendar);
-
-      this.subscription = this.apiService.emailId$.subscribe((emailId) => {
-        console.log('emailId in ts :', emailId);
-        this.emailId = emailId;
-        localStorage.setItem("userEmailId", this.emailId)
-      });
-      this.apiService.setUserEmailId(this.emailId);
-
-      // const id = params['id'];
-      // console.log("ng oninit called");
-
-      // this.subscription = this.apiService.evName$.subscribe((evName) => {
-      //   console.log('evName in ts :', evName);
-      //   this.evName = evName;
-      // });
-      // this.subscription = this.apiService.evDurHrs$.subscribe((evDurHrs) => {
-      //   console.log('evDurHrs in ts :', evDurHrs);
-      //   this.evDurHrs = evDurHrs;
-      // });
-      // this.subscription = this.apiService.evDurMins$.subscribe((evDurMins) => {
-      //   console.log('evDurMins in ts :', evDurMins);
-      //   this.evDurMins = evDurMins;
-      // });
-      // this.subscription = this.apiService.evType$.subscribe((evType) => {
-      //   console.log('evType in ts :', evType);
-      //   this.evType = evType;
-      // });
-      this.subscription = this.apiService.image$.subscribe((image) => {
-        console.log('image in ts :', image);
-        this.image = image;
-        this.avatar = `${this.API_URL}/${image}`
-        console.log("avatar ", this.avatar);
-        
-      });
-      // this.subscription = this.apiService.allowInviteesToAddGuests$.subscribe((allowInviteesToAddGuests) => {
-      //   console.log('allowInviteesToAddGuests in ts :', allowInviteesToAddGuests);
-      //   this.allowInviteesToAddGuests = allowInviteesToAddGuests;
-      // });
-      // localStorage.setItem('allowInviteesToAddGuests', event.allowInviteesToAddGuests);
-
-
-
-
-
-
-
-
-
-
-      // this.subscription = this.apiService.selectedUserAvailabilityObj$.subscribe((avObj) => {
-      //   console.log('Av Obj', avObj);
-      //   this.selectedUserAvObj = avObj;
-      //   console.log("this av obj ",this.selectedUserAvObj);
-      // });
-
+      this.evLinkEnd = params['evL']
+      this.getParticularUserByUid(this.userId)
     })
-    // this.apiService.getSelectedUsersAvailaibilityObj()
 
-    setTimeout(() => {
-
-
-
-      // ===========================================
-      console.log("the selected evId and emailIdis ", this.evId, this.emailId);
-
-      this.apiService.getSelectedEvent(this.evId, this.emailId)
-      this.subscription = this.apiService.reqEvent$.subscribe((reqEventObj) => {
-        this.reqEventObj = reqEventObj
-        console.log("reqEventObj ", reqEventObj);
-
-        if (Object.keys(reqEventObj).length > 0) { // i.e. object is not empty
-          // ================================================
-          // evName = ""
-          // evDurHrs = 0
-          // evDurMins = 0
-          // evLocation = localStorage.getItem("eventLocation")
-          // allowInviteesToAddGuests = true
-          // evType = ""
-          // // meetingArray : any[] = [];
-          // formattedMeetingsHide: object[] = [];
-          // timeSelected = "";
-          // eventName = "";
-          // eventDesc = "";
-          // loading = false
-          // selectedUserAvObj = {}
-          // nameWhoseCalendar = ""
-          // ================================================
-
-
-          console.log("got reqEventObj ", reqEventObj);
-          this.evName = reqEventObj["evName"]
-          this.evDurHrs = reqEventObj["evDuration"]["hrs"]
-          this.evDurMins = reqEventObj["evDuration"]["minutes"]
-          this.evLocation = reqEventObj["evLocation"]
-          this.allowInviteesToAddGuests = reqEventObj["allowInviteesToAddGuests"]
-          this.evType = reqEventObj["evType"]
-          this.lastNameRequired = reqEventObj["surnameReq"]
-          this.redirectTo = reqEventObj["redirectTo"]
-
-          if (reqEventObj["evType"] == "Group") {
-            this.noOfBookingsAllowedForAParticularTimeInGrpEvent = reqEventObj["maxInviteesPerEventForGrpEvent"]
-            this.displayRemainingSpotsOnBookingPageGrp = reqEventObj["displayRemainingSpotsOnBookingPageGrp"]
-          }
-
-          // ===========================
-        }
-      })
-
-     
-
-      this.apiService.getParticularUser(this.emailId)
-      this.subscription = this.apiService.cloduraBrandingReq$.subscribe((cloduraBrandingReq) => {
-        console.log('cloduraBrandingReq :', cloduraBrandingReq);
-        this.cloduraBrandingReq = cloduraBrandingReq;
-        console.log("this.cloduraBrandingReq ", this.cloduraBrandingReq);
-      });
-
-      
-      this.apiService.getMeetingsHide(this.emailId);
-      this.apiService.getSelectedUsersAvailaibilityObj()
-
-      this.subscription = this.apiService.formattedMeetingsHide$.subscribe((formattedMeetingsHide) => {
-        console.log('Formatted Meetings Hide in ts :', formattedMeetingsHide);
-        this.formattedMeetingsHide = formattedMeetingsHide;
-        this.Events = formattedMeetingsHide;
-        console.log("Events ", this.Events);
-      });
-      this.subscription = this.apiService.selectedUserAvailabilityObj$.subscribe((avObj) => {
-        this.selectedUserAvObj = avObj
-        console.log("selectedUserAvObj ", this.selectedUserAvObj);
-
-
-        this.duration = this.selectedUserAvObj["duration"]
-        console.log("duration ", this.selectedUserAvObj["duration"]);
-
-        this.workingHrsAsPerDays = this.selectedUserAvObj["workingHrs"]
-        console.log("workingHrsAsPerDays ", this.selectedUserAvObj["workingHrs"]);
-
-
-        this.workingDays = this.selectedUserAvObj["workingDays"]
-        console.log("workingDays ", this.selectedUserAvObj["workingDays"]);
-
-        this.nonWorkingDays = this.selectedUserAvObj["nonWorkingDays"]
-        console.log("nonWorkingDays ", this.selectedUserAvObj["nonWorkingDays"]);
-
-        // console.log("duration ",this.duration);  
-      })
-    }, 2500)
     setTimeout(() => {
       this.calendarOptions = {
         initialView: 'dayGridMonth',
@@ -320,12 +165,118 @@ export class CreateMeetingComponentComponent implements OnInit {
         dateClick: this.onDateClick.bind(this),
         dayCellContent: this.theDayCellContent.bind(this),
       }
-    }, 5000);
+    }, 3000);
+
+
+
+  }
+
+  async getParticularUserByUid(uid) {
+    console.log("getParticularUserByUid is called");
+
+    this.user = await this.apiService.getParticularUserByUid(uid)
+    console.log("user ", this.user);
+
+    this.nameWhoseCalendar = this.user['name']
+    this.emailId = this.user['emailID']
+    localStorage.setItem("userEmailId", this.emailId)
+    this.apiService.setUserName(this.nameWhoseCalendar);
+    this.apiService.setUserEmailId(this.emailId);
+
+    this.image = this.user['profileImage'];
+    console.log('image in ts :', this.image);
+
+    this.avatar = `${this.API_URL}/${this.user['profileImage']}`
+    console.log("avatar ", this.avatar);
+
+
+    this.cloduraBrandingReq = this.user.cloduraBranding;
+    console.log("this.cloduraBrandingReq ", this.cloduraBrandingReq);
+
+    for (let i = 0; i < this.user.eventLinks.length; i++) {
+      if (this.user.eventLinks[i].linkEnd == this.evLinkEnd) {
+        this.evId = this.user.eventLinks[i].evId
+        localStorage.setItem("eventId", this.evId)
+        break;
+      }
+    }
+
+
+    this.apiService.getSelectedEvent(this.evId, this.emailId)
+    this.assignValuesToEventDeets()
+
+    // Fetch meetings
+    this.apiService.getReqDetails(this.userId, this.evId)
+
+
+    this.apiService.getMeetingsHide(this.emailId);
+    this.apiService.getSelectedUsersAvailaibilityObj()
+
+    this.subscription = this.apiService.formattedMeetingsHide$.subscribe((formattedMeetingsHide) => {
+      console.log('Formatted Meetings Hide in ts :', formattedMeetingsHide);
+      this.formattedMeetingsHide = formattedMeetingsHide;
+      this.Events = formattedMeetingsHide;
+      console.log("Events ", this.Events);
+    });
+    this.subscription = this.apiService.selectedUserAvailabilityObj$.subscribe((avObj) => {
+      this.selectedUserAvObj = avObj
+      console.log("selectedUserAvObj ", this.selectedUserAvObj);
+
+
+      this.duration = this.selectedUserAvObj["duration"]
+      console.log("duration ", this.selectedUserAvObj["duration"]);
+
+      this.workingHrsAsPerDays = this.selectedUserAvObj["workingHrs"]
+      console.log("workingHrsAsPerDays ", this.selectedUserAvObj["workingHrs"]);
+
+
+      this.workingDays = this.selectedUserAvObj["workingDays"]
+      console.log("workingDays ", this.selectedUserAvObj["workingDays"]);
+
+      this.nonWorkingDays = this.selectedUserAvObj["nonWorkingDays"]
+      console.log("nonWorkingDays ", this.selectedUserAvObj["nonWorkingDays"]);
+
+      // console.log("duration ",this.duration);  
+    })
 
 
     this.getAllEventEditings()
 
+
   }
+
+  assignValuesToEventDeets() {
+    console.log("the selected evId and emailIdis ", this.evId, this.emailId);
+    this.subscription = this.apiService.reqEvent$.subscribe((reqEventObj) => {
+      this.reqEventObj = reqEventObj
+      console.log("reqEventObj ", reqEventObj);
+      if (Object.keys(reqEventObj).length > 0) { // i.e. object is not empty
+        console.log("got reqEventObj ", reqEventObj);
+        this.evName = reqEventObj["evName"]
+        this.evDurHrs = reqEventObj["evDuration"]["hrs"]
+        this.evDurMins = reqEventObj["evDuration"]["minutes"]
+        this.evLocation = reqEventObj["evLocation"]
+        this.allowInviteesToAddGuests = reqEventObj["allowInviteesToAddGuests"]
+        this.evType = reqEventObj["evType"]
+        this.lastNameRequired = reqEventObj["surnameReq"]
+        this.redirectTo = reqEventObj["redirectTo"]
+
+        if (reqEventObj["evType"] == "Group") {
+          this.noOfBookingsAllowedForAParticularTimeInGrpEvent = reqEventObj["maxInviteesPerEventForGrpEvent"]
+          this.displayRemainingSpotsOnBookingPageGrp = reqEventObj["displayRemainingSpotsOnBookingPageGrp"]
+        }
+      }
+    })
+  }
+
+
+
+
+  // this.evId = eventId
+  // localStorage.setItem("eventId", this.evId)
+
+
+
 
 
   // =======getsAllEventEditedOptions starts==================
@@ -334,7 +285,7 @@ export class CreateMeetingComponentComponent implements OnInit {
 
     console.log("getAllEventEditings called");
 
-    this.apiService.getSelectedEvent(this.evId, this.emailId)
+    // this.apiService.getSelectedEvent(this.evId, this.emailId)
     this.subscription = this.apiService.reqEvent$.subscribe((reqEventObj) => {
       this.reqEventObj = reqEventObj
       if (Object.keys(reqEventObj).length > 0) { // i.e. object is not empty
@@ -347,6 +298,14 @@ export class CreateMeetingComponentComponent implements OnInit {
         this.evDurHrs = reqEventObj["evDuration"]["hrs"]
         this.evDurMins = reqEventObj["evDuration"]["minutes"]
         this.eventLink = this.eventN
+        this.backGroundcolor = reqEventObj['bgClr']
+        this.textColor = reqEventObj['txtClr']
+        this.btnAndLinkColor = reqEventObj['btnAndLnkClr']
+
+        localStorage.setItem("backGroundcolor", this.backGroundcolor)
+        localStorage.setItem("textColor", this.textColor)
+        localStorage.setItem("btnAndLinkColor", this.btnAndLinkColor)
+
 
         // ===========================
       }
@@ -355,60 +314,18 @@ export class CreateMeetingComponentComponent implements OnInit {
     setTimeout(() => {
       this.allowInviteesToScheduleOn = this.reqEventObj["whenCanInviteesSchedule"] //making allowInviteesToScheduleOn object
       console.log("allowInviteesToScheduleOn ", this.allowInviteesToScheduleOn);
-      //   {
-      //     "indefinitely": {
-      //         "status": false
-      //     },
-      //     "status": true,
-      //     "days": {
-      //         "status": true,
-      //         "noOfDays": 5,
-      //         "_id": "66793e367d68d29c14f6d1e1"
-      //     },
-      //     "withinDateRange": {
-      //         "status": false,
-      //         "start": "2024-06-24",
-      //         "end": "2024-07-03",
-      //         "_id": "66793e367d68d29c14f6d1e2"
-      //     },
-      //     "_id": "66793e367d68d29c14f6d1e0"
-      // }
+
 
       this.minTimeReqBeforeScheduling = this.reqEventObj["minimumNotice"] //making minTimeReqBeforeScheduling object
       console.log("minTimeReqBeforeScheduling ", this.minTimeReqBeforeScheduling);
-      //   {
-      //     "hrs": {
-      //         "status": false
-      //     },
-      //     "mins": {
-      //         "status": true
-      //     },
-      //     "days": {
-      //         "status": false
-      //     },
-      //     "status": true,
-      //     "_id": "66793e367d68d29c14f6d1e3"
-      // }
+
 
       this.noOfMeetingsAllowedPerDay = this.reqEventObj["noOfMeetsAllowedPerDay"] //making noOfMeetingsAllowedPerDay object
-
       console.log("assigned value ", this.noOfMeetingsAllowedPerDay);
 
-      //   console.log("noOfMeetingsAllowedPerDay ", this.noOfMeetingsAllowedPerDay);
-      //   {
-      //     "status": true,
-      //     "noOfMeetsAllowed": 4,
-      //     "_id": "66793e367d68d29c14f6d1e4"
-      // }
 
       this.timesStartTimeIncrements = this.reqEventObj["startTimIncrements"] //making timesStartTimeIncrements object
-      console.log("timesStartTimeIncrements ", this.timesStartTimeIncrements);
-      //   {
-      //     "status": true,
-      //     "mins": 20,
-      //     "hrs": 0,
-      //     "_id": "66793e367d68d29c14f6d1e5"
-      // }
+
 
       this.meetingsOfOnlyThisEvent = this.reqEventObj["meetings"] //making meetingsOfOnlyThisEvent object
 
@@ -429,45 +346,58 @@ export class CreateMeetingComponentComponent implements OnInit {
           this.duration.minutes = this.timesStartTimeIncrements.mins
         }
       }
-
-      // =================do these changes later==============================
-      // whenCanInviteesSchedule = JSON.parse(localStorage.getItem("whenCanInviteesSchedule"))
-      // minimumNotice = JSON.parse(localStorage.getItem("minimumNotice"))
-      // noOfMeetsAllowedPerDay = JSON.parse(localStorage.getItem("noOfMeetsAllowedPerDay"))
-      // startTimIncrements
-
-      // this.whenCanInviteesSchedule = this.allowInviteesToScheduleOn
-      // this.minimumNotice = this.minTimeReqBeforeScheduling
-      // ===============================================
-
-
-      // ======if user has specified the active days code starts===========      
       this.setActiveDaysAsPerUserReq()
-      //======= if user has specified date Range ends===============
-
-      // ========setTimesAsPerMinNotice starts==================
-      // this.setTimesAsPerMinNotice()
-      // ========setTimesAsPerMinNotice ends====================
 
 
-    }, 5000)
+    }, 3000)
 
   }
   // =======getsAllEventEditedOptions ends====================
 
+  isPastDate(date: Date): boolean {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of today
+    return date < today;
+  }
+
   // ----------theDayCellContent starts----------
   theDayCellContent(info: any) {
-
 
     const dayOfWeek = info.date.getDay();
     const date = info.date.getDate();
     // console.log(dayOfWeek);
+
+    console.log("textColor ", this.textColor);
+    console.log("btnAndLinkColor ", this.btnAndLinkColor);
+
+
+
     for (let i = 0; i < this.nonWorkingDays.length; i++) {
       if (dayOfWeek === this.nonWorkingDays[i]) {
-        return { html: '<div style="color: grey">' + date + '</div>' };
+        if (this.textColor == 'black' || this.textColor == '#000000') {
+          return { html: `<div style="color: grey">` + date + '</div>' };
+        }
+        else {
+          return { html: `<div style="color: ${this.textColor}">` + date + '</div>' };
+        }
       }
     }
-    return { html: '<div>' + date + '</div>' };
+    if (this.isPastDate(info.date)) {
+      if (this.textColor == 'black' || this.textColor == '#000000') {
+        return { html: `<div style="color: grey;">` + date + '</div>' };
+      }
+      else {
+        return { html: `<div style="color: ${this.textColor}">` + date + '</div>' };
+      }
+    }
+    else {
+      // return { html: `<div style="color: ${this.btnAndLinkColor}; font-weight:bold; background-color: #eff0fe; border-radius: 50px; padding: 10px">` + date + '</div>' };
+      return { html: `<div style="color: ${this.btnAndLinkColor}; font-weight: bold;">` + date + '</div>' };
+
+    }
+
+
+
   }
   // ----------theDayCellContent ends------------
 
@@ -962,6 +892,7 @@ export class CreateMeetingComponentComponent implements OnInit {
       //if selected date is earlier than today's date
       if (res.dateStr < this.currentformattedDate) {
         alert('Please select a date on or after today.')
+        this.displayTimeDiv = false
       }
       else {//if selected date is on or later than today's date
         console.log("res ", res)
@@ -1293,7 +1224,9 @@ export class CreateMeetingComponentComponent implements OnInit {
               // Function to convert time string "HH:MM:SS" to seconds since midnight
               function timeToSeconds(time) {
                 let [hours, minutes, seconds] = time.split(':').map(Number);
+                // return hours * 3600 + minutes * 60 + seconds;
                 return hours * 3600 + minutes * 60 + seconds;
+
               }
 
               // Convert all times to seconds
@@ -1343,72 +1276,72 @@ export class CreateMeetingComponentComponent implements OnInit {
             function filterBookedTimes(allTimesArray, userBookedStartTimesArray, userBookedEndTimesArray, usersBookedStartTimesForThisEvent, usersBookedEndTimesForThisEvent, maxBookings) {
               // Function to convert time string "HH:MM:SS" to seconds since midnight
               function timeToSeconds(time) {
-                  let [hours, minutes, seconds] = time.split(':').map(Number);
-                  return hours * 3600 + minutes * 60 + seconds;
+                let [hours, minutes, seconds] = time.split(':').map(Number);
+                return hours * 3600 + minutes * 60 + seconds;
               }
-          
+
               // Function to convert seconds since midnight back to time string "HH:MM:SS"
               function secondsToTime(seconds) {
-                  let hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
-                  let mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-                  let secs = (seconds % 60).toString().padStart(2, '0');
-                  return `${hours}:${mins}:${secs}`;
+                let hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
+                let mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+                let secs = (seconds % 60).toString().padStart(2, '0');
+                return `${hours}:${mins}:${secs}`;
               }
-          
+
               // Convert all times to seconds
               let allTimesInSeconds = allTimesArray.map(timeToSeconds);
               let bookedStartTimesInSeconds = userBookedStartTimesArray.map(item => timeToSeconds(item.eventStartTime));
               let bookedEndTimesInSeconds = userBookedEndTimesArray.map(item => timeToSeconds(item.eventEndTime));
               let eventStartTimesInSeconds = usersBookedStartTimesForThisEvent.map(item => timeToSeconds(item.eventStartTime));
               let eventEndTimesInSeconds = usersBookedEndTimesForThisEvent.map(item => timeToSeconds(item.eventEndTime));
-          
+
               // Initialize a dictionary to keep track of bookings
               let bookingCount = {};
               usersBookedStartTimesForThisEvent.forEach(item => {
-                  if (bookingCount[item.eventStartTime]) {
-                      bookingCount[item.eventStartTime]++;
-                  } else {
-                      bookingCount[item.eventStartTime] = 1;
-                  }
+                if (bookingCount[item.eventStartTime]) {
+                  bookingCount[item.eventStartTime]++;
+                } else {
+                  bookingCount[item.eventStartTime] = 1;
+                }
               });
-          
+
               // Function to check if a time is within any booked interval
               function isBooked(time) {
-                  for (let i = 0; i < bookedStartTimesInSeconds.length; i++) {
-                      if (time >= bookedStartTimesInSeconds[i] && time < bookedEndTimesInSeconds[i]) {
-                          return true;
-                      }
+                for (let i = 0; i < bookedStartTimesInSeconds.length; i++) {
+                  if (time >= bookedStartTimesInSeconds[i] && time < bookedEndTimesInSeconds[i]) {
+                    return true;
                   }
-                  return false;
+                }
+                return false;
               }
-          
+
               // Function to check if a time is within any fully booked interval for the event
               function isFullyBookedForEvent(time) {
-                  for (let i = 0; i < eventStartTimesInSeconds.length; i++) {
-                      if (bookingCount[secondsToTime(eventStartTimesInSeconds[i])] >= maxBookings &&
-                          time >= eventStartTimesInSeconds[i] && time < eventEndTimesInSeconds[i]) {
-                          return true;
-                      }
+                for (let i = 0; i < eventStartTimesInSeconds.length; i++) {
+                  if (bookingCount[secondsToTime(eventStartTimesInSeconds[i])] >= maxBookings &&
+                    time >= eventStartTimesInSeconds[i] && time < eventEndTimesInSeconds[i]) {
+                    return true;
                   }
-                  return false;
-                  
+                }
+                return false;
+
               }
-          
+
               // Filter out the times that are within the booked intervals or fully booked intervals for the event
               let filteredTimesInSeconds = allTimesInSeconds.filter(time => !isBooked(time) && !isFullyBookedForEvent(time));
-          
+
               // Convert the filtered times back to "HH:MM:SS" format
               return filteredTimesInSeconds.map(timeInSeconds => {
-                  let time = secondsToTime(timeInSeconds);
-                  let remainingBookings = maxBookings - (bookingCount[time] || 0);
-                  console.log("remainingBookings ", remainingBookings);
-                  
-                  return { time, remainingBookings };
+                let time = secondsToTime(timeInSeconds);
+                let remainingBookings = maxBookings - (bookingCount[time] || 0);
+                console.log("remainingBookings ", remainingBookings);
+
+                return { time, remainingBookings };
               });
-          }
+            }
 
             let usersAvailaibleTimes = filterBookedTimes(allTimesArray, usersBookedTimes, usersBookedEndTimes, usersBookedStartTimesForThisEvent, usersBookedEndTimesForThisEvent, this.noOfBookingsAllowedForAParticularTimeInGrpEvent);
-            console.log(usersAvailaibleTimes);
+            console.log("line 1344",usersAvailaibleTimes);
             console.log(usersBookedStartTimesForThisEvent, usersBookedEndTimesForThisEvent);
 
 
@@ -1423,12 +1356,12 @@ export class CreateMeetingComponentComponent implements OnInit {
 
             console.log("this.userAvailaibleArray ", this.userAvailaibleArray);
           }
-          
-          
-          
-          }
-          }
-          }
+
+
+
+        }
+      }
+    }
   }
 
   // ---------------onDateClick new ends---------------
@@ -1875,7 +1808,7 @@ export class CreateMeetingComponentComponent implements OnInit {
     localStorage.setItem("allowInviteesToAddGuests", this.allowInviteesToAddGuests)
     localStorage.setItem("lastNameRequired", this.lastNameRequired)
     localStorage.setItem('redirectTo', JSON.stringify(this.redirectTo))
-  
+
     console.log(oneTime[0], oneTime[1], oneTime[3], oneTime[4]);
 
     let hrs = Number(oneTime[0] + oneTime[1]) //09

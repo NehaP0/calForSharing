@@ -32,6 +32,9 @@ import {radixCross2} from '@ng-icons/radix-icons'
 import { DatePipe } from '@angular/common';
 import { MakeMeetingComponent } from './make-meeting/make-meeting.component';
 import { ThankyouPageComponent } from './thankyou-page/thankyou-page.component';
+import { CancellationPageComponent } from './cancellation-page/cancellation-page.component';
+import { CancelConfirmedComponent } from './cancel-confirmed/cancel-confirmed.component';
+import { OopsComponent } from './oops/oops.component';
 
 
 @NgModule({
@@ -40,6 +43,9 @@ import { ThankyouPageComponent } from './thankyou-page/thankyou-page.component';
     CreateMeetingComponentComponent,
     MakeMeetingComponent,
     ThankyouPageComponent,
+    CancellationPageComponent,
+    CancelConfirmedComponent,
+    OopsComponent,
   ],
   imports: [
     FormsModule,

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Component } from '@angular/core';
 
 @Component({
@@ -6,5 +8,9 @@ import { Component } from '@angular/core';
   styleUrl: './thankyou-page.component.css'
 })
 export class ThankyouPageComponent {
+  backGroundcolor:string = localStorage.getItem('backGroundcolor')
+  textColor:string = localStorage.getItem("textColor")
+  btnAndLinkColor:string = localStorage.getItem("btnAndLinkColor")
+
 
 }

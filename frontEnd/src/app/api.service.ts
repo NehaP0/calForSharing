@@ -62,61 +62,61 @@ export class APIService {
   // const name = params['name'];
   // this.nameWhoseCalendar = name
   private emailIdSubject = new BehaviorSubject<string>('');
-      // const id = params['id'];
-      // console.log("ng oninit called");
-      // this.apiService.setUserName(name);
-      // this.apiService.setUserEmailId(id);
-      // console.log('Name:', name);
-      // console.log('ID:', id);
-    private evNameSubject = new BehaviorSubject<string>('');
-      // this.evName = params['evName']
-    
-    private evDurHrsSubject = new BehaviorSubject<number>(0);
-      // this.evDurHrs = Number(params['evDurHrs'])
+  // const id = params['id'];
+  // console.log("ng oninit called");
+  // this.apiService.setUserName(name);
+  // this.apiService.setUserEmailId(id);
+  // console.log('Name:', name);
+  // console.log('ID:', id);
+  private evNameSubject = new BehaviorSubject<string>('');
+  // this.evName = params['evName']
 
-    private evDurMinsSubject = new BehaviorSubject<number>(0);
-      // this.evDurMins = Number(params['evDurMins'])
+  private evDurHrsSubject = new BehaviorSubject<number>(0);
+  // this.evDurHrs = Number(params['evDurHrs'])
 
-    private evTypeSubject = new BehaviorSubject<string>('');
-      // this.evType = params['evType']
+  private evDurMinsSubject = new BehaviorSubject<number>(0);
+  // this.evDurMins = Number(params['evDurMins'])
 
-    private imageSubject = new BehaviorSubject<string>('');
-      // this.image = params['image']
+  private evTypeSubject = new BehaviorSubject<string>('');
+  // this.evType = params['evType']
 
-    private avatarSubject = new BehaviorSubject<string>('');
-      // this.avatar = `${this.API_URL}/${params['image']}`
+  private imageSubject = new BehaviorSubject<string>('');
+  // this.image = params['image']
 
-    private allowInviteesToAddGuestsSubject = new BehaviorSubject<boolean>(true)
-    private reqEventSubject = new BehaviorSubject<object>({});
-    private cloduraBrandingReqSubject = new BehaviorSubject<boolean>
+  private avatarSubject = new BehaviorSubject<string>('');
+  // this.avatar = `${this.API_URL}/${params['image']}`
+
+  private allowInviteesToAddGuestsSubject = new BehaviorSubject<boolean>(true)
+  private reqEventSubject = new BehaviorSubject<object>({});
+  private cloduraBrandingReqSubject = new BehaviorSubject<boolean>
 
 
-      public name$ = this.nameSubject.asObservable();;
-      // const name = params['name'];
-      // this.nameWhoseCalendar = name
-      public emailId$ = this.emailIdSubject.asObservable();;
-      // const id = params['id'];
-      // console.log("ng oninit called");
-      // this.apiService.setUserName(name);
-      // this.apiService.setUserEmailId(id);
-      // console.log('Name:', name);
-      // console.log('ID:', id);
-    public evName$ = this.evNameSubject.asObservable();;
-      // this.evName = params['evName']
-    
-    public evDurHrs$ = this.evDurHrsSubject.asObservable();;
-      // this.evDurHrs = Number(params['evDurHrs'])
+  public name$ = this.nameSubject.asObservable();;
+  // const name = params['name'];
+  // this.nameWhoseCalendar = name
+  public emailId$ = this.emailIdSubject.asObservable();;
+  // const id = params['id'];
+  // console.log("ng oninit called");
+  // this.apiService.setUserName(name);
+  // this.apiService.setUserEmailId(id);
+  // console.log('Name:', name);
+  // console.log('ID:', id);
+  public evName$ = this.evNameSubject.asObservable();;
+  // this.evName = params['evName']
 
-    public evDurMins$ = this.evDurMinsSubject.asObservable();;
-      // this.evDurMins = Number(params['evDurMins'])
+  public evDurHrs$ = this.evDurHrsSubject.asObservable();;
+  // this.evDurHrs = Number(params['evDurHrs'])
 
-    public evType$ = this.evTypeSubject.asObservable();;
-      // this.evType = params['evType']
+  public evDurMins$ = this.evDurMinsSubject.asObservable();;
+  // this.evDurMins = Number(params['evDurMins'])
 
-    public image$ = this.imageSubject.asObservable();;
-      // this.image = params['image']
+  public evType$ = this.evTypeSubject.asObservable();;
+  // this.evType = params['evType']
 
-    public avatar$ = this.avatarSubject.asObservable();;
+  public image$ = this.imageSubject.asObservable();;
+  // this.image = params['image']
+
+  public avatar$ = this.avatarSubject.asObservable();;
 
   // for create meeting page ends-----------------------------------
 
@@ -170,7 +170,7 @@ export class APIService {
 
   private headers: HttpHeaders = new HttpHeaders();
 
-  constructor(private httpClient: HttpClient, private router: Router) {}
+  constructor(private httpClient: HttpClient, private router: Router) { }
 
   getallusers() {
     return this.httpClient.get(`${this.API_URL}/allUsersRoute/`, {
@@ -210,7 +210,20 @@ export class APIService {
     return this.httpClient.post(`${this.API_URL}/user/login`, user);
   }
 
-  async getParticularUser(emailId){
+  async getParticularUserByUid(uid) {
+    const response = await this.httpClient.get(`${this.API_URL}/user/getParticularUserBuUid?uid=${uid}`, {
+      headers: {
+        // Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }).toPromise();;
+
+    console.log("got user ", response['user']);
+    let user = response['user']
+    return response['user']
+  }
+
+  async getParticularUser(emailId) {
     const response = await this.httpClient.get(`${this.API_URL}/user/getParticularUser?userEmailId=${emailId}`, {
       headers: {
         // Authorization: `Bearer ${token}`
@@ -221,7 +234,7 @@ export class APIService {
     console.log("got user ", response['user']);
     let user = response['user']
     this.cloduraBrandingReqSubject.next(user['cloduraBranding'])
-    return response['user']   
+    return response['user']
   }
 
 
@@ -328,10 +341,10 @@ export class APIService {
 
     //   this.formattedMeetingsHideSubject.next(formattedMeetingsHide);
     // }
-    console.log("id ", id);    
+    console.log("id ", id);
 
     const usersObj = await this.httpClient.get(`${this.API_URL}/allUsersRoute/`).toPromise();
-    
+
     const users = usersObj['users'];
     console.log('users', users);
 
@@ -390,9 +403,9 @@ export class APIService {
       //   end: meeting.end,
       // }));
 
-      
 
-      if(user.events[i].evType=="Group"){
+
+      if (user.events[i].evType == "Group") {
         for (let j = 0; j < meetingsArr.length; j++) {
           let oneMeetObj = {
             Id: meetingsArr[j]._id,
@@ -400,12 +413,12 @@ export class APIService {
             // title: "",
             start: meetingsArr[j].start,
             end: meetingsArr[j].end,
-            bookedForWhichEvId : meetingsArr[j].bookedForWhichEvId
+            bookedForWhichEvId: meetingsArr[j].bookedForWhichEvId
           };
           meetings.push(oneMeetObj);
         }
       }
-      else{
+      else {
         for (let j = 0; j < meetingsArr.length; j++) {
           let oneMeetObj = {
             Id: meetingsArr[j]._id,
@@ -726,27 +739,27 @@ export class APIService {
   }
 
 
-  async getReqDetails(reqUserId, eventId){
+  async getReqDetails(reqUserId, eventId) {
     console.log("getReqDetails called in api.service.ts ", reqUserId, eventId);
-    
+
     try {
       const response = await this.httpClient
         .get(`${this.API_URL}/allUsersRoute/getAUser`, { params: { reqUserId, eventId } })
-        .toPromise(); 
+        .toPromise();
 
       console.log("response ", response)
 
       let user = response.reqUser
 
-      console.log("user in my new app ", user); 
-      this.nameSubject.next(user.name) 
-      this.emailIdSubject.next(user.emailID) 
+      console.log("user in my new app ", user);
+      this.nameSubject.next(user.name)
+      this.emailIdSubject.next(user.emailID)
       this.imageSubject.next(user.profileImage)
 
-      let reqEvent = user.events.find((oneEvent)=>oneEvent._id == eventId)
+      let reqEvent = user.events.find((oneEvent) => oneEvent._id == eventId)
 
       console.log("reqEvent ", reqEvent);
-      
+
 
       this.evTypeSubject.next(reqEvent.evType)
       this.evNameSubject.next(reqEvent.evName)
@@ -754,44 +767,68 @@ export class APIService {
       this.evDurHrsSubject.next(Number(reqEvent.evDuration.hrs))
       this.allowInviteesToAddGuestsSubject.next(reqEvent.allowInviteesToAddGuests)
 
-// emailID:"nehaphadtare334@gmail.com"
-// events: [{…}]
-// meetingsWtOthers: [{…}]
-// name: "Neha"
-// password: "$2b$05$gE7PUbkOry2m058uFU.AkeMnTj/WbOZQsRPN4ce5doNl8pCv8FQ8y"
-// phoneNumber: "9359412215"
-// profileImage: "uploads/667501779730dae2badb93e950636954"
-// userAvailability: {duration: {…}, workingHrs: {…}, workingDays: Array(5), nonWorkingDays: Array(2), _id: '665d9c43bcf62662eda44a03'}
-// voting: []
-// _id: "665d9c43bcf62662eda44a00"
-      
+      // emailID:"nehaphadtare334@gmail.com"
+      // events: [{…}]
+      // meetingsWtOthers: [{…}]
+      // name: "Neha"
+      // password: "$2b$05$gE7PUbkOry2m058uFU.AkeMnTj/WbOZQsRPN4ce5doNl8pCv8FQ8y"
+      // phoneNumber: "9359412215"
+      // profileImage: "uploads/667501779730dae2badb93e950636954"
+      // userAvailability: {duration: {…}, workingHrs: {…}, workingDays: Array(5), nonWorkingDays: Array(2), _id: '665d9c43bcf62662eda44a03'}
+      // voting: []
+      // _id: "665d9c43bcf62662eda44a00"
+
     } catch (error) {
       console.log("err ", error);
-      
+
     }
   }
 
-  async getSelectedEvent(evId, loggedInEmailId){
+  async getSelectedEvent(evId, loggedInEmailId) {
     console.log("getSelectedEvent called in api ", evId, loggedInEmailId);
-    
-     let reqEvent = {}
-     let response = await this.httpClient
-     .get(`${this.API_URL}/event/getParticularEvent/${loggedInEmailId}/${evId}`)
-     .toPromise();
-     console.log("sending response ", response);
-     
-     
-     if(response['message'] == "Found"){
-       reqEvent = response['reqEvent']
-       console.log("reqEvent ", reqEvent);
-       this.reqEventSubject.next(reqEvent) 
-     }
-     else{
-       console.log(response['message']);
-       
-     }
-   }
 
+    let reqEvent = {}
+    let response = await this.httpClient
+      .get(`${this.API_URL}/event/getParticularEvent/${loggedInEmailId}/${evId}`)
+      .toPromise();
+    console.log("sending response ", response);
+
+
+    if (response['message'] == "Found") {
+      reqEvent = response['reqEvent']
+      console.log("reqEvent ", reqEvent);
+      this.reqEventSubject.next(reqEvent)
+    }
+    else {
+      console.log(response['message']);
+
+    }
+  }
+
+
+  deleteParticularMeet(emailIdOfWhoCancelled, emailIdOfWhoseCalendar, evId, meetId, cancelationReason) {
+
+    return this.httpClient
+      .patch(
+        `${this.API_URL}/event/deleteMeet`,
+        { emailIdOfWhoCancelled, emailIdOfWhoseCalendar, evId, meetId, cancelationReason }
+      )
+      .subscribe(
+        (response) => {
+          console.log(response);
+          if (response['message'] == "Deleted") {
+            this.router.navigate(['/cancelConfirmed'])
+          }
+          else{
+            alert(response['message']);
+          }
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+
+  }
 
 
 }

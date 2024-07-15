@@ -1,11 +1,11 @@
 <!-- <app-navbar></app-navbar> -->
-<div id="main">
+<div id="main" >
   <div *ngIf="wait" id="waitBox">
     <h3>Please wait...</h3>
   </div>
-  <div id="content">
+  <div id="content" [ngStyle]="{'background-color': backGroundcolor, 'color':textColor}">
     <div id="leftDiv">
-      <!-- <button id="backButton"><ng-icon name="bootstrapArrowLeft"></ng-icon></button> -->
+      <!-- <ng-icon name="bootstrapArrowLeft" (click)="backBtn()"></ng-icon> -->
       <p>{{ nameWhoseCalendar }}</p>
       <p id="eventName">{{ evName }}</p>
       <p>
@@ -47,7 +47,7 @@
 
 
         <div id="addGuestsDiv" *ngIf="allowInviteesToAddGuests">
-          <button id="addGuests" *ngIf="!addGuests" (click)="addguests()" type="button">
+          <button id="addGuests" *ngIf="!addGuests" (click)="addguests()" type="button"  [ngStyle]="{'background-color':btnAndLinkColor, 'border':'1px solid' +  btnAndLinkColor}">
             Add Guests
           </button>
           <div id="guests">
@@ -77,7 +77,7 @@
           </div>
         </div>
 
-        <button id="scheduleEvent" type="submit">Schedule Event</button>
+        <button id="scheduleEvent" type="submit" [ngStyle]="{'background-color':btnAndLinkColor, 'border':'1px solid' +  btnAndLinkColor}">Schedule Event</button>
       </form>
     </div>
   </div>

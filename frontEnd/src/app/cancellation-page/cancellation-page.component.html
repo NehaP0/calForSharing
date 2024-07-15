@@ -1,0 +1,24 @@
+<div id="content">
+    <div id="leftDiv">
+        <div *ngIf="image" id="imageDiv">
+            <img [src]="avatar" alt="avatar">
+        </div>
+        <p>{{userName}}</p>
+        <h3>{{evName}}</h3>
+        <span><ng-icon name="bootstrapClock"></ng-icon></span>  &nbsp; <span *ngIf="evDurHrs">{{evDurHrs}} hrs &nbsp; <!--  for space --></span>
+        <span *ngIf="evDurMins">{{evDurMins}} mins</span>
+         <p></p>
+        <span><ng-icon name="remixCalendar2Line"></ng-icon> &nbsp; </span>
+        <span>{{start.split('T')[1]}} - {{end.split('T')[1]}}, {{start.split('T')[0]}}</span>
+    </div>
+    <div id="rightDiv">
+        <h3>Cancel Event?</h3>
+        <h4>Reason for canceling</h4>
+        <input type="text" [(ngModel)]="cancelationReason">
+        <!-- <p *ngIf="showWarning && !cancelationReason" id="warning">This field is required</p> -->
+        <p *ngIf="showWarning && !cancelationReason" id="warning">This field is required.</p>
+
+        <button (click)="cancelEvent()">Cancel Event</button>
+    </div>
+
+</div>
