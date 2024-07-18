@@ -667,6 +667,28 @@ export class APIService {
       );
   }
 
+
+  patchContactsArr(emailOfCalendarOwner, contactObj) {
+    console.log('patchUserAvailability called');
+    console.log("emailOfCalendarOwner ", emailOfCalendarOwner, "contactObj ", contactObj);
+    
+
+    return this.httpClient
+      .patch(
+        `${this.API_URL}/user/updateContactsArr`,
+        { emailOfCalendarOwner, contactObj }
+      )
+      .subscribe(
+        (response) => {
+          console.log(response);
+          console.log(response['message']);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+  }
+
   async getSelectedUsersAvailaibilityObj() {
     console.log('called for Av Obj');
 

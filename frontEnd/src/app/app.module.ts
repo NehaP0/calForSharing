@@ -35,6 +35,7 @@ import { ThankyouPageComponent } from './thankyou-page/thankyou-page.component';
 import { CancellationPageComponent } from './cancellation-page/cancellation-page.component';
 import { CancelConfirmedComponent } from './cancel-confirmed/cancel-confirmed.component';
 import { OopsComponent } from './oops/oops.component';
+import { ReschedulingComponent } from './rescheduling/rescheduling.component';
 
 
 @NgModule({
@@ -46,6 +47,7 @@ import { OopsComponent } from './oops/oops.component';
     CancellationPageComponent,
     CancelConfirmedComponent,
     OopsComponent,
+    ReschedulingComponent,
   ],
   imports: [
     FormsModule,

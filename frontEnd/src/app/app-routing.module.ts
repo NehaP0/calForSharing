@@ -6,7 +6,7 @@ import { ThankyouPageComponent } from './thankyou-page/thankyou-page.component';
 import { CancellationPageComponent } from './cancellation-page/cancellation-page.component';
 import { CancelConfirmedComponent } from './cancel-confirmed/cancel-confirmed.component';
 import { OopsComponent } from './oops/oops.component';
-
+import { ReschedulingComponent } from './rescheduling/rescheduling.component';
 
 const routes: Routes = [
   { path: 'create', component: CreateMeetingComponentComponent },
@@ -14,7 +14,8 @@ const routes: Routes = [
   {path : 'thankyou', component : ThankyouPageComponent},
   {path : 'cancelMeet', component : CancellationPageComponent},
   {path : 'cancelConfirmed', component : CancelConfirmedComponent},
-  {path : 'oops', component : OopsComponent}
+  {path : 'oops', component : OopsComponent},
+  {path: 'rescheduling', component : ReschedulingComponent}
 ];
 
 @NgModule({

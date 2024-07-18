@@ -1,0 +1,104 @@
+<!-- <app-navbar></app-navbar> -->
+
+<div id="parentDiv" [ngStyle]="{'color':textColor}">
+
+    <!-- <div>
+        <h3 *ngIf="loading" id="loading">Meeting creation in progress....</h3>
+      </div> -->
+  
+  
+  
+    <div id="eventDeets" [ngStyle]="{'background-color': backGroundcolor}">
+      <!-- <div class="powered-by-badge" *ngIf="cloduraBrandingReq">
+        <div id="poweredBy">Powered by <div id="clodura">Clodura</div> </div>
+    </div> -->
+      <div id="belowGreyStrip">
+          <div id="avatarDiv" *ngIf="image">
+            <img *ngIf="image" [src]="avatar" alt="img">
+          </div>
+        <hr>
+
+        <p>{{loggedInName}}</p>
+        <p>{{evName || "Event name here"}}</p>
+  
+        <div id="timeAndLocation"  [ngStyle]="{'color':textColor}">
+          <div>
+            <ng-icon name="bootstrapClock"></ng-icon>
+            <span *ngIf="evDurHrs!=0">{{evDurHrs}}</span><span *ngIf="evDurHrs!=0"> hrs &nbsp; <!--  for space --></span>
+            
+            <span *ngIf="evDurMins!=0">{{evDurMins}} </span> <span *ngIf="evDurMins!=0"> mins </span>
+            <!-- <p>{{"" || "15 mins"}}</p> -->
+          </div>
+          <div>
+            <ng-icon name="octLocation"></ng-icon>
+            <span id="locationP">{{"Google Meet" || "Add a location for it to show here"}}</span>
+          </div>
+        </div>
+      </div>
+  
+  
+      <!-- --------------------------------------------------------------------------------------------- -->
+  
+      <div id="divForCalendarAndTime">
+  
+        <div *ngIf="!formattedMeetingsHide.length">
+          <h3>Please Wait...</h3>
+        </div>
+        <full-calendar id="calendar" defaultView="dayGridMonth" *ngIf="formattedMeetingsHide.length > 0"
+          [options]="calendarOptions" plugins={[dayGridPlugin]}>
+        </full-calendar>
+  
+        <div *ngIf="displayTimeDiv" class="timeDiv">
+          <!-- <div class="timeDiv"> -->
+          <div id="timeLeftDIv">
+  
+            <p>{{dateSelected}}</p>
+  
+            <!-- <button class="confirmEvent" (click)="createEvent(EventName.value)">Confirm Event</button> -->
+  
+            <!-- <label for="EventName">Event Name</label> -->
+            <!-- <input type="text" id="EventName" name="EventName" #EventName> -->
+  
+            <!-- <label for="EventDesc">Event Description</label> -->
+            <!-- <input type="text" id="EventDesc" name="EventDesc" #EventDesc> -->
+  
+            <div id="times" *ngIf="evType == 'One-on-One'">
+              <div *ngFor="let oneTime of userAvailaibleArray; let i = index">
+                <button class="oneTime" [ngStyle]="{'background-color': backGroundcolor, 'color':btnAndLinkColor, 'border': '1px solid ' + btnAndLinkColor}"  (click)="setEventTime(oneTime)"
+                  [hidden]="showNextFor==oneTime">{{oneTime}}</button>
+                <button class="oneTimeHidden" [hidden]="showNextFor!=oneTime">{{oneTime}}</button>
+                <button class="nextBtn" [ngStyle]="{'background-color': btnAndLinkColor, 'border': '1px solid ' + btnAndLinkColor}" [hidden]="showNextFor!=oneTime"
+                  (click)="nextButton(evName, evDurHrs, evDurMins, oneTime)">Next</button>
+              </div>
+              <div id="noTimesAv" *ngIf="userAvailaibleArray.length == 0">                        
+                <p>No times available on {{dateSelected}}</p>
+                <p>Please select another date.</p>
+              </div>
+            </div>
+  
+            <div id="times" *ngIf="evType == 'Group'">
+              <div *ngFor="let oneTime of userAvailaibleArray; let i = index">
+                <button class="oneTime" [ngStyle]="{'background-color': backGroundcolor, 'color':btnAndLinkColor, 'border': '1px solid ' + btnAndLinkColor}" (click)="setEventTime(oneTime)"
+                  [hidden]="showNextFor==oneTime">{{oneTime['time']}}
+                  <p  id="spotsLeft" *ngIf="displayRemainingSpotsOnBookingPageGrp && oneTime['remainingBookings']==1">{{oneTime['remainingBookings']}} spot left</p>
+                  <p  id="spotsLeft" *ngIf="displayRemainingSpotsOnBookingPageGrp  && oneTime['remainingBookings']>1">{{oneTime['remainingBookings']}} spots left</p>
+  
+                </button>
+                <button class="oneTimeHidden" [hidden]="showNextFor!=oneTime">{{oneTime['time']}}</button>
+                <button class="nextBtn" [hidden]="showNextFor!=oneTime" [ngStyle]="{'background-color': btnAndLinkColor, 'border': '1px solid ' + btnAndLinkColor}"
+                  (click)="nextButton(evName, evDurHrs, evDurMins, oneTime['time'])">Next</button>
+              </div>
+              <div id="noTimesAv" *ngIf="!userAvailaibleArray.length">                        
+                <p>No times available on {{dateSelected}}</p>
+                <p>Please select another date.</p>
+              </div>
+            </div>
+  
+            <!-- <div id="timeRightDIv">
+              <button (click)="changeDisplayTimeDiv()">X</button>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -26,10 +26,11 @@ export class MakeMeetingComponent implements OnInit {
   day = localStorage.getItem('day');
   month = localStorage.getItem('month');
   date = localStorage.getItem('date');
+  contactsArr = JSON.parse(localStorage.getItem('contactsArr'))
 
-  backGroundcolor:string = localStorage.getItem('backGroundcolor')
-  textColor:string = localStorage.getItem("textColor")
-  btnAndLinkColor:string = localStorage.getItem("btnAndLinkColor")
+  backGroundcolor: string = localStorage.getItem('backGroundcolor')
+  textColor: string = localStorage.getItem("textColor")
+  btnAndLinkColor: string = localStorage.getItem("btnAndLinkColor")
 
   lastNameRequired = JSON.parse(localStorage.getItem('lastNameRequired'))
   allowInviteesToAddGuestsStr = localStorage.getItem('allowInviteesToAddGuests')
@@ -41,6 +42,7 @@ export class MakeMeetingComponent implements OnInit {
   questionsToBeAsked = []
   questionsWdAnswers = []
   lastNameBlank = false
+  pasEvntDeetsToRedirectPg
 
   oneOnOne = false;
   wait = false
@@ -48,7 +50,7 @@ export class MakeMeetingComponent implements OnInit {
 
   ngOnInit() {
 
-    
+
     if (this.evType == 'One-on-One') {
       this.oneOnOne = true;
     }
@@ -65,6 +67,7 @@ export class MakeMeetingComponent implements OnInit {
         this.allowInviteesToAddGuests = reqEventObj.allowInviteesToAddGuests
         console.log("this.questionsToBeAsked ", this.questionsToBeAsked);
         this.questionsWdAnswers = reqEventObj.questionsToBeAsked
+        this.pasEvntDeetsToRedirectPg = reqEventObj.pasEvntDeetsToRedirectPg
         this.questionsWdAnswers.forEach((obj) => {
           return obj["answer"] = ""
         })
@@ -159,45 +162,115 @@ export class MakeMeetingComponent implements OnInit {
           evId: this.evId,
           userSurname: userForm.value.LastName
         };
+
+        console.log("meet ", meet);
+        
         this.wait = true
         console.log("wait after validation ", this.wait);
+
+        let foundUserInContactsArr = false
+        let idOfInvitee = ""
+        for(let i=0; i<this.contactsArr.length; i++){
+          if(this.contactsArr[i].emailID == userForm.value.Email){
+            foundUserInContactsArr = true
+            idOfInvitee = this.contactsArr[i]._id
+            break;
+          }
+        }
+        console.log("foundUserInContactsArr ", foundUserInContactsArr, "idOfInvitee ", idOfInvitee);
+        
+        if(foundUserInContactsArr == false){
+          idOfInvitee = (Math.floor(Math.random() * 10000000000000001).toString())
+        }
+        
+        console.log("idOfInvitee ", idOfInvitee);
+        
+        let usersFullName = ""
+        if(userForm.value.LastName){
+          usersFullName = `${meet.user} ${meet.userSurname}`
+        }
+        else{
+          usersFullName = meet.user
+        }
 
         // alert('Please wait...')
 
         // uncomment below
-        this.apiService
-          .scheduleMeetBymakeMeetingPage(meet)
+        
+        this.apiService.scheduleMeetBymakeMeetingPage(meet)
           .subscribe((response) => {
-            this.wait = false
+            
             console.log(response);
             console.log("wait after result ", this.wait);
 
-            if (response['message'] == 'Meeting scheduled successfully. A calendar invitation has been mailed to the attendees.') {
+            if (response['message'] == 'Meeting scheduled successfully. A calendar invitation will be mailed to the attendees.') {
 
               if (this.redirectTo.confirmationPage.status == true) {
+                this.wait = false
                 this.router.navigate(['/thankyou']);
               }
               else {
-                let link = this.redirectTo.externalUrl.link
-                window.location.href = link
-                // this.router.navigate(link);
+                if(this.pasEvntDeetsToRedirectPg){
+                  let query
+                  if(meet.otherEmails.length == 0){
+                    
+                    if(meet.userSurname){
+                      query = `assigned_to=${this.nameWhoseCalendar}&event_type_uuid=${this.evId}&event_type_name=${this.evName}&event_start_time=${this.date}T${this.startTime}&event_end_time=${this.date}T${this.endTime}&invitee_uuid=${idOfInvitee}&invitee_first_name=${meet.user}&invitee_last_name=${meet.userSurname}&invitee_email=${meet.userEmail}`
+                    }
+                    else{
+                      query = `assigned_to=${this.nameWhoseCalendar}&event_type_uuid=${this.evId}&event_type_name=${this.evName}&event_start_time=${this.date}T${this.startTime}&event_end_time=${this.date}T${this.endTime}&invitee_uuid=${idOfInvitee}&invitee_first_name=${meet.user}&invitee_email=${meet.userEmail}`
+                    }
+                  }
+                  else{
+                    console.log('inside else, since there are guests');
+                    let guestsStr = ""
+                    for(let i=0; i<meet.otherEmails.length; i++){
+                      if(meet.otherEmails[i]!="" && meet.otherEmails[i]!=" "){
+                        guestsStr+= `&guests=${meet.otherEmails[i]}`
+                      }
+                    }
+                    console.log("guestsStr ", guestsStr);
+                    
+                    if(meet.userSurname){
+                      query = `assigned_to=${this.nameWhoseCalendar}&event_type_uuid=${this.evId}&event_type_name=${this.evName}&event_start_time=${this.date}T${this.startTime}&event_end_time=${this.date}T${this.endTime}&invitee_uuid=${idOfInvitee}&invitee_first_name=${meet.user}&invitee_last_name=${meet.userSurname}&invitee_email=${meet.userEmail}${guestsStr}`
+                    }
+                    else{
+                      query = `assigned_to=${this.nameWhoseCalendar}&event_type_uuid=${this.evId}&event_type_name=${this.evName}&event_start_time=${this.date}T${this.startTime}&event_end_time=${this.date}T${this.endTime}&invitee_uuid=${idOfInvitee}&invitee_first_name=${meet.user}&invitee_email=${meet.userEmail}${guestsStr}`
+                    }
+                  }
+                  // assigned_to=Clodura.AI&event_type_uuid=103dba2d-2879-4693-98bf-229f6a5b77b8&event_type_name=test&event_start_time=2024-07-11T12%3A00%3A00%2B05%3A30&event_end_time=2024-07-11T12%3A30%3A00%2B05%3A30&invitee_uuid=4a4af215-7b7e-4f37-a566-47a9ff84e377&invitee_first_name=Neha&invitee_last_name=Phadtare&invitee_email=nehaphadtare334%40gmail.com
+                  // ?assigned_to=Clodura.AI&event_type_uuid=103dba2d-2879-4693-98bf-229f6a5b77b8&event_type_name=test&event_start_time=2024-07-17T10%3A00%3A00%2B05%3A30&event_end_time=2024-07-17T10%3A30%3A00%2B05%3A30&invitee_uuid=0a2eebaa-c910-4caf-a1aa-7b17f48f5356&invitee_first_name=Neha&invitee_last_name=p&invitee_email=nehaphadtare334%40gmail.com&guests%5B%5D=nehaphadtare443%40gmail.com&guests%5B%5D=neha.phadtare%40clodura.ai
+                  // ?assigned_to=Clodura.AI&event_type_uuid=103dba2d-2879-4693-98bf-229f6a5b77b8&event_type_name=test&event_start_time=2024-07-17T10%3A00%3A00%2B05%3A30&event_end_time=2024-07-17T10%3A30%3A00%2B05%3A30&invitee_uuid=00c08667-5324-4ab8-bbf9-c17b620313b9&invitee_first_name=Neha&invitee_last_name=Phadtare&invitee_email=nehaphadtare334%40gmail.com                
+                  console.log('query ', query);
+                  this.wait = false
+                  let link = `${this.redirectTo.externalUrl.link}?${query}`
+                  window.location.href = link
+                  console.log('link ', link);
+                }
+                else{
+                  this.wait = false
+                  let link = this.redirectTo.externalUrl.link
+                  window.location.href = link
+                }
               }
             }
             else {
               alert(response['message']);
             }
-
-            // if(response['message'] == "You are scheduled. A calendar invitation has been sent to your email address."){
-            // }
-            // else{
-            //   this.wait = false
-            //   alert("Meeting scheduling failed. Please try after some time.")
-            // }
-
           });
+
+
+          if(foundUserInContactsArr == false){
+            let contactObj = {name:usersFullName, emailID:meet.userEmail, _id : idOfInvitee}
+            this.apiService.patchContactsArr(this.emailId, contactObj)
+          }
+
 
         // uncomment above
         // this.apiService.scheduleMeetBymakeMeetingPage(meet)
+
+
+
       }
       // }
 

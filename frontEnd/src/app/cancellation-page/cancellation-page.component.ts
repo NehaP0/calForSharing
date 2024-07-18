@@ -58,35 +58,52 @@ export class CancellationPageComponent {
 
   async getParticularEvent() {
     await this.apiService.getSelectedEvent(this.evId, this.emailIdOfWhoseCalendar)
+    console.log("this.evId, this.emailIdOfWhoseCalendar ", this.evId, this.emailIdOfWhoseCalendar);
+
+    let foundreqEventObj = false
     this.subscription = this.apiService.reqEvent$.subscribe((reqEventObj) => {
       this.reqEventObj = reqEventObj
-      console.log("reqEventObj ", reqEventObj);
-      if (Object.keys(reqEventObj).length > 0) { // i.e. object is not empty
-        console.log("got reqEventObj ", reqEventObj);
-        this.evName = reqEventObj["evName"]
-        this.evDurHrs = reqEventObj["evDuration"]["hrs"]
-        this.evDurMins = reqEventObj["evDuration"]["minutes"]
-        this.evLocation = reqEventObj["evLocation"]
+      if (reqEventObj) {
+        foundreqEventObj = true
+        console.log("reqEventObj ", reqEventObj);
+        if (Object.keys(reqEventObj).length > 0) { // i.e. object is not empty
+          console.log("got reqEventObj ", reqEventObj);
+          this.evName = reqEventObj["evName"]
+          this.evDurHrs = reqEventObj["evDuration"]["hrs"]
+          this.evDurMins = reqEventObj["evDuration"]["minutes"]
+          this.evLocation = reqEventObj["evLocation"]
 
 
-        let reqMeet
-        let foundMeet = false
-        for (let i = 0; i < reqEventObj['meetings'].length; i++) {
-          if (reqEventObj['meetings'][i]._id == this.meetId) {
-            foundMeet = true
-            reqMeet = reqEventObj['meetings'][i]
-            break;
+          let reqMeet
+          let foundMeet = false
+          for (let i = 0; i < reqEventObj['meetings'].length; i++) {
+            if (reqEventObj['meetings'][i]._id == this.meetId) {
+              foundMeet = true
+              reqMeet = reqEventObj['meetings'][i]
+              break;
+            }
           }
-        }
-        if(foundMeet==false){
-          this.router.navigate(['/oops'])
-        }
-        this.start = reqMeet["start"]
-        this.end = reqMeet["end"]
+          console.log("found", foundMeet);
+
+          if (foundMeet == false) {
+            this.router.navigate(['/oops'])
+          }
+          this.start = reqMeet["start"]
+          this.end = reqMeet["end"]
 
 
+        }
       }
     })
+
+    console.log("foundreqEventObj ", foundreqEventObj);
+    if(!foundreqEventObj){
+      let foundMeetInMeetWtOthers = await this.getParticularMeetFromMeetWithOthers()
+      if(!foundMeetInMeetWtOthers){
+        this.router.navigate(['/oops'])
+      }
+    }
+    
   }
 
   async getParticularUser() {
@@ -101,14 +118,33 @@ export class CancellationPageComponent {
 
   }
 
-  cancelEvent(){
-    if(!this.cancelationReason){
+  async getParticularMeetFromMeetWithOthers() {
+    console.log("getParticularMeetFromMeetWithOthers called");
+    
+    this.user = await this.apiService.getParticularUser(this.emailIdOfWhoseCalendar)
+    let meetingsWtOthers = this.user.meetingsWtOthers
+    let found = false
+    for(let i=0; i<meetingsWtOthers.length; i++){
+      if(meetingsWtOthers[i]._id == this.meetId){
+        found = true
+        this.start = meetingsWtOthers[i]["start"]
+        this.end = meetingsWtOthers[i]["end"]
+        break;
+      }
+    }
+    console.log("found meet in meetwtothers ", found);
+    
+    return found
+  }
+
+  cancelEvent() {
+    if (!this.cancelationReason) {
       this.showWarning = true
     }
-    else{
+    else {
       this.showWarning = false
 
-      this.apiService.deleteParticularMeet( this.emailIdOfWhoCancelled, this.emailIdOfWhoseCalendar, this.evId,this.meetId,this.cancelationReason)
+      this.apiService.deleteParticularMeet(this.emailIdOfWhoCancelled, this.emailIdOfWhoseCalendar, this.evId, this.meetId, this.cancelationReason)
     }
   }
 }
