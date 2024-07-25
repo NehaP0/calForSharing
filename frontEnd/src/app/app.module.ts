@@ -16,7 +16,9 @@ import { CreateMeetingComponentComponent } from './create-meeting-component/crea
 import {RecurrenceEditorModule, ScheduleModule, DayService, WeekService, WorkWeekService, MonthService, MonthAgendaService} from '@syncfusion/ej2-angular-schedule'
 
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
-
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { NgIconsModule } from '@ng-icons/core';
 import { heroUsers, heroVideoCamera, heroGlobeAsiaAustralia } from '@ng-icons/heroicons/outline';
@@ -36,6 +38,7 @@ import { CancellationPageComponent } from './cancellation-page/cancellation-page
 import { CancelConfirmedComponent } from './cancel-confirmed/cancel-confirmed.component';
 import { OopsComponent } from './oops/oops.component';
 import { ReschedulingComponent } from './rescheduling/rescheduling.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 @NgModule({
@@ -61,6 +64,9 @@ import { ReschedulingComponent } from './rescheduling/rescheduling.component';
     NgxSearchFilterModule,
     RecurrenceEditorModule,
     ScheduleModule,
+    MatMenuModule,
+    MatButtonModule,
+    MatTooltipModule,
     BsDatepickerModule.forRoot(),
     AccordionModule.forRoot(),
     NgIconsModule.withIcons({ heroUsers, ionSettingsOutline, bootstrapStars, remixUserAddLine, ionSearchOutline, bootstrapCaretDownFill, ionCopyOutline, bootstrapChevronDown,
@@ -72,7 +78,7 @@ import { ReschedulingComponent } from './rescheduling/rescheduling.component';
   
   providers: [
     // provideClientHydration()
-    DayService, WeekService, MonthAgendaService, WorkWeekService, MonthService,DatePipe
+    DayService, WeekService, MonthAgendaService, WorkWeekService, MonthService,DatePipe, provideAnimationsAsync()
 
   ],
   bootstrap: [AppComponent]

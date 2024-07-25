@@ -1,5 +1,5 @@
 // @ts-nocheck 
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { APIService } from '../api.service';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,7 +7,7 @@ import { Calendar, CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { DatePipe } from '@angular/common';
-
+import * as moment from 'moment-timezone';
 
 
 @Component({
@@ -51,10 +51,13 @@ export class CreateMeetingComponentComponent implements OnInit {
   selectedDayName = ""
   selectedMonth = ""
   userAvailaibleArray = []
+  userAvailaibleArray24 = []
+  userAvailaibleArray12 = []
   Events: any[] = [];
   allTimesArray = []
   showNext = false
   showNextFor = ""
+  showingIn24hr = true
 
   workingHrStart = ""
   workingHrEnd = ""
@@ -67,7 +70,10 @@ export class CreateMeetingComponentComponent implements OnInit {
   image = ""
   reqEventObj = {}
   API_URL = 'http://localhost:3000';
-
+  months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i); // Last 10 years
+  selectedMonth = new Date().toLocaleString('default', { month: 'long' });
+  selectedYear = new Date().getFullYear();
 
 
   // hardcoding--------
@@ -167,9 +173,8 @@ export class CreateMeetingComponentComponent implements OnInit {
       }
     }, 3000);
 
-
-
   }
+
 
   async getParticularUserByUid(uid) {
     console.log("getParticularUserByUid is called");
@@ -246,6 +251,55 @@ export class CreateMeetingComponentComponent implements OnInit {
 
 
   }
+
+  changeTimeFormat() {
+    console.log('changeTimeFormat called');
+
+    this.showingIn24hr = !this.showingIn24hr
+    if (this.showingIn24hr) {
+      this.userAvailaibleArray = this.userAvailaibleArray24
+    }
+    else {
+      this.userAvailaibleArray = this.userAvailaibleArray12;
+    }
+    console.log('since ', this.showingIn24hr, 'so ', this.userAvailaibleArray);
+
+  }
+
+  to12HourFormat(time: string): string {
+    console.log("time ", time);
+
+    const [hours, minutes] = time.split(':').map(Number);
+    const suffix = hours >= 12 ? 'pm' : 'am';
+    const hours12 = hours % 12 || 12; // Convert '0' to '12' for midnight
+    return `${hours12.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${suffix}`;
+  }
+
+  convertTo12HourFormat(): void {
+    console.log('convertTo12HourFormat called');
+
+    if (this.evType == 'One-on-One') {
+      this.userAvailaibleArray12 = this.userAvailaibleArray24.map(time => this.to12HourFormat(time));
+      console.log(" this.userAvailaibleArray12 ", this.userAvailaibleArray12);
+      console.log("userAvailaibleArray24 ", this.userAvailaibleArray24);
+    }
+    // {time: '09:00', remainingBookings: 2}
+    else {
+      this.userAvailaibleArray12 = this.userAvailaibleArray24.map((item) => {
+        return {
+          time: this.to12HourFormat(item['time']),
+          remainingBookings: item['remainingBookings']
+        }
+      }
+      )
+      console.log(" this.userAvailaibleArray12 ", this.userAvailaibleArray12);
+      console.log("userAvailaibleArray24 ", this.userAvailaibleArray24);
+    }
+
+
+  }
+
+
 
   assignValuesToEventDeets() {
     console.log("the selected evId and emailIdis ", this.evId, this.emailId);
@@ -377,7 +431,7 @@ export class CreateMeetingComponentComponent implements OnInit {
     for (let i = 0; i < this.nonWorkingDays.length; i++) {
       if (dayOfWeek === this.nonWorkingDays[i]) {
         if (this.textColor == 'black' || this.textColor == '#000000') {
-          return { html: `<div style="color: grey">` + date + '</div>' };
+          return { html: `<div style="color: grey;">` + date + '</div>' };
         }
         else {
           return { html: `<div style="color: ${this.textColor}">` + date + '</div>' };
@@ -868,6 +922,25 @@ export class CreateMeetingComponentComponent implements OnInit {
 
     this.dateSelected = res.dateStr
 
+
+    // todays date and time starts
+    let todaysdate = new Date();
+    console.log(todaysdate);
+    const day = String(todaysdate.getDate()).padStart(2, '0');
+    const month = String(todaysdate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = todaysdate.getFullYear();
+    todaysdate = `${year}-${month}-${day}`; // e.g., "2024-07-25"
+    console.log("todaysdate == this.dateSelected", todaysdate == this.dateSelected);
+
+
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    let currentTime = `${hours}:${minutes}`;
+    console.log("currentTime ", currentTime);
+
+    // todays date and time ends
+
     let returnOffindHowManyEventsAreAlreadyBookedFnctn;
     console.log("this.noOfMeetingsAllowedPerDay ", this.noOfMeetingsAllowedPerDay);
 
@@ -1095,18 +1168,18 @@ export class CreateMeetingComponentComponent implements OnInit {
             //buulding timestring properly because it is a string
             if (workingStartHours < 10) {
               if (workingStartMinutes < 10) {
-                timeStr = `0${workingStartHours}:0${workingStartMinutes}:00`
+                timeStr = `0${workingStartHours}:0${workingStartMinutes}`
               }
               else {
-                timeStr = `0${workingStartHours}:${workingStartMinutes}:00`
+                timeStr = `0${workingStartHours}:${workingStartMinutes}`
               }
             }
             else {
               if (workingStartMinutes < 10) {
-                timeStr = `${workingStartHours}:0${workingStartMinutes}:00`
+                timeStr = `${workingStartHours}:0${workingStartMinutes}`
               }
               else {
-                timeStr = `${workingStartHours}:${workingStartMinutes}:00`
+                timeStr = `${workingStartHours}:${workingStartMinutes}`
               }
             }
 
@@ -1221,25 +1294,77 @@ export class CreateMeetingComponentComponent implements OnInit {
 
           console.log("evType is ", this.evType);
 
+          // if (this.evType == "One-on-One") {
+          //   function filterBookedTimes(allTimesArray, userBookedStartTimesArray, userBookedEndTimesArray) {
+          //     // Function to convert time string "HH:MM:SS" to seconds since midnight
+          //     function timeToSeconds(time) {
+          //       let [hours, minutes, seconds] = time.split(':').map(Number);
+          //       // return hours * 3600 + minutes * 60 + seconds;
+          //       return hours * 3600 + minutes * 60 + seconds;
+
+          //     }
+
+          //     // Convert all times to seconds
+          //     let allTimesInSeconds = allTimesArray.map(timeToSeconds);
+          //     let bookedStartTimesInSeconds = userBookedStartTimesArray.map(item => timeToSeconds(item.eventStartTime));
+          //     let bookedEndTimesInSeconds = userBookedEndTimesArray.map(item => timeToSeconds(item.eventEndTime));
+
+          //     // Function to check if a time is within any booked interval
+          //     function isBooked(time) {
+          //       for (let i = 0; i < bookedStartTimesInSeconds.length; i++) {
+          //         if (time >= bookedStartTimesInSeconds[i] && time < bookedEndTimesInSeconds[i]) {
+          //           return true;
+          //         }
+          //       }
+          //       return false;
+          //     }
+
+          //     // Filter out the times that are within the booked intervals
+          //     let filteredTimesInSeconds = allTimesInSeconds.filter(time => !isBooked(time));
+
+          //     // Convert the filtered times back to "HH:MM:SS" format
+          //     function secondsToTime(seconds) {
+          //       let hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
+          //       let mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+          //       let secs = (seconds % 60).toString().padStart(2, '0');
+          //       return `${hours}:${mins}:${secs}`;
+          //     }
+
+          //     return filteredTimesInSeconds.map(secondsToTime);
+          //   }
+
+          //   let usersAvailaibleTimes = filterBookedTimes(allTimesArray, usersBookedTimes, usersBookedEndTimes);
+          //   console.log(usersAvailaibleTimes);
+          //   // ===========================================
+
+          //   if (this.minTimeReqBeforeScheduling.status == true) {
+          //     this.setTimesAsPerMinNotice(usersAvailaibleTimes, selectedDate)
+          //   }
+          //   else {
+          //     this.userAvailaibleArray = usersAvailaibleTimes
+          //   }
+
+          //   console.log("this.userAvailaibleArray ", this.userAvailaibleArray);
+
+          // }
+
           if (this.evType == "One-on-One") {
             function filterBookedTimes(allTimesArray, userBookedStartTimesArray, userBookedEndTimesArray) {
-              // Function to convert time string "HH:MM:SS" to seconds since midnight
-              function timeToSeconds(time) {
-                let [hours, minutes, seconds] = time.split(':').map(Number);
-                // return hours * 3600 + minutes * 60 + seconds;
-                return hours * 3600 + minutes * 60 + seconds;
-
+              // Function to convert time string "HH:MM" to minutes since midnight
+              function timeToMinutes(time) {
+                let [hours, minutes] = time.split(':').map(Number);
+                return hours * 60 + minutes;
               }
 
-              // Convert all times to seconds
-              let allTimesInSeconds = allTimesArray.map(timeToSeconds);
-              let bookedStartTimesInSeconds = userBookedStartTimesArray.map(item => timeToSeconds(item.eventStartTime));
-              let bookedEndTimesInSeconds = userBookedEndTimesArray.map(item => timeToSeconds(item.eventEndTime));
+              // Convert all times to minutes
+              let allTimesInMinutes = allTimesArray.map(timeToMinutes);
+              let bookedStartTimesInMinutes = userBookedStartTimesArray.map(item => timeToMinutes(item.eventStartTime));
+              let bookedEndTimesInMinutes = userBookedEndTimesArray.map(item => timeToMinutes(item.eventEndTime));
 
               // Function to check if a time is within any booked interval
               function isBooked(time) {
-                for (let i = 0; i < bookedStartTimesInSeconds.length; i++) {
-                  if (time >= bookedStartTimesInSeconds[i] && time < bookedEndTimesInSeconds[i]) {
+                for (let i = 0; i < bookedStartTimesInMinutes.length; i++) {
+                  if (time >= bookedStartTimesInMinutes[i] && time < bookedEndTimesInMinutes[i]) {
                     return true;
                   }
                 }
@@ -1247,17 +1372,16 @@ export class CreateMeetingComponentComponent implements OnInit {
               }
 
               // Filter out the times that are within the booked intervals
-              let filteredTimesInSeconds = allTimesInSeconds.filter(time => !isBooked(time));
+              let filteredTimesInMinutes = allTimesInMinutes.filter(time => !isBooked(time));
 
-              // Convert the filtered times back to "HH:MM:SS" format
-              function secondsToTime(seconds) {
-                let hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
-                let mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-                let secs = (seconds % 60).toString().padStart(2, '0');
-                return `${hours}:${mins}:${secs}`;
+              // Convert the filtered times back to "HH:MM" format
+              function minutesToTime(minutes) {
+                let hours = Math.floor(minutes / 60).toString().padStart(2, '0');
+                let mins = (minutes % 60).toString().padStart(2, '0');
+                return `${hours}:${mins}`;
               }
 
-              return filteredTimesInSeconds.map(secondsToTime);
+              return filteredTimesInMinutes.map(minutesToTime);
             }
 
             let usersAvailaibleTimes = filterBookedTimes(allTimesArray, usersBookedTimes, usersBookedEndTimes);
@@ -1268,38 +1392,145 @@ export class CreateMeetingComponentComponent implements OnInit {
               this.setTimesAsPerMinNotice(usersAvailaibleTimes, selectedDate)
             }
             else {
-              this.userAvailaibleArray = usersAvailaibleTimes
+              if (todaysdate == this.dateSelected) {
+                usersAvailaibleTimes = usersAvailaibleTimes.filter(time => time >= currentTime)
+              }
+              console.log('newArr ', usersAvailaibleTimes);
+
+              this.userAvailaibleArray = usersAvailaibleTimes;
+              this.userAvailaibleArray24 = usersAvailaibleTimes
+              this.convertTo12HourFormat();
+
             }
 
             console.log("this.userAvailaibleArray ", this.userAvailaibleArray);
-
           }
+
+          // else if (this.evType == "Group") {
+          //   function filterBookedTimes(allTimesArray, userBookedStartTimesArray, userBookedEndTimesArray, usersBookedStartTimesForThisEvent, usersBookedEndTimesForThisEvent, maxBookings) {
+          //     // Function to convert time string "HH:MM:SS" to seconds since midnight
+          //     function timeToSeconds(time) {
+          //       let [hours, minutes, seconds] = time.split(':').map(Number);
+          //       return hours * 3600 + minutes * 60 + seconds;
+          //     }
+
+          //     // Function to convert seconds since midnight back to time string "HH:MM:SS"
+          //     function secondsToTime(seconds) {
+          //       let hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
+          //       let mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+          //       let secs = (seconds % 60).toString().padStart(2, '0');
+          //       return `${hours}:${mins}:${secs}`;
+          //     }
+
+          //     // Convert all times to seconds
+          //     let allTimesInSeconds = allTimesArray.map(timeToSeconds);
+          //     let bookedStartTimesInSeconds = userBookedStartTimesArray.map(item => timeToSeconds(item.eventStartTime));
+          //     let bookedEndTimesInSeconds = userBookedEndTimesArray.map(item => timeToSeconds(item.eventEndTime));
+          //     let eventStartTimesInSeconds = usersBookedStartTimesForThisEvent.map(item => timeToSeconds(item.eventStartTime));
+          //     let eventEndTimesInSeconds = usersBookedEndTimesForThisEvent.map(item => timeToSeconds(item.eventEndTime));
+
+          //     // Initialize a dictionary to keep track of bookings
+          //     let bookingCount = {};
+          //     usersBookedStartTimesForThisEvent.forEach(item => {
+          //       if (bookingCount[item.eventStartTime]) {
+          //         bookingCount[item.eventStartTime]++;
+          //       } else {
+          //         bookingCount[item.eventStartTime] = 1;
+          //       }
+          //     });
+
+          //     // Function to check if a time is within any booked interval
+          //     function isBooked(time) {
+          //       for (let i = 0; i < bookedStartTimesInSeconds.length; i++) {
+          //         if (time >= bookedStartTimesInSeconds[i] && time < bookedEndTimesInSeconds[i]) {
+          //           return true;
+          //         }
+          //       }
+          //       return false;
+          //     }
+
+          //     // Function to check if a time is within any fully booked interval for the event
+          //     function isFullyBookedForEvent(time) {
+          //       for (let i = 0; i < eventStartTimesInSeconds.length; i++) {
+          //         if (bookingCount[secondsToTime(eventStartTimesInSeconds[i])] >= maxBookings &&
+          //           time >= eventStartTimesInSeconds[i] && time < eventEndTimesInSeconds[i]) {
+          //           return true;
+          //         }
+          //       }
+          //       return false;
+
+          //     }
+
+          //     // Filter out the times that are within the booked intervals or fully booked intervals for the event
+          //     let filteredTimesInSeconds = allTimesInSeconds.filter(time => !isBooked(time) && !isFullyBookedForEvent(time));
+
+          //     // Convert the filtered times back to "HH:MM:SS" format
+          //     return filteredTimesInSeconds.map(timeInSeconds => {
+          //       let time = secondsToTime(timeInSeconds);
+          //       let remainingBookings = maxBookings - (bookingCount[time] || 0);
+          //       console.log("remainingBookings ", remainingBookings);
+
+          //       return { time, remainingBookings };
+          //     });
+          //   }
+
+          //   let usersAvailaibleTimes = filterBookedTimes(allTimesArray, usersBookedTimes, usersBookedEndTimes, usersBookedStartTimesForThisEvent, usersBookedEndTimesForThisEvent, this.noOfBookingsAllowedForAParticularTimeInGrpEvent);
+          //   console.log("line 1344", usersAvailaibleTimes);
+          //   console.log(usersBookedStartTimesForThisEvent, usersBookedEndTimesForThisEvent);
+
+
+          //   // =============================
+
+          //   if (this.minTimeReqBeforeScheduling.status == true) {
+          //     this.setTimesAsPerMinNotice(usersAvailaibleTimes, selectedDate)
+          //   }
+          //   else {
+          //     this.userAvailaibleArray = usersAvailaibleTimes
+          //   }
+
+          //   console.log("this.userAvailaibleArray ", this.userAvailaibleArray);
+          // }
+
           else if (this.evType == "Group") {
-            function filterBookedTimes(allTimesArray, userBookedStartTimesArray, userBookedEndTimesArray, usersBookedStartTimesForThisEvent, usersBookedEndTimesForThisEvent, maxBookings) {
-              // Function to convert time string "HH:MM:SS" to seconds since midnight
-              function timeToSeconds(time) {
-                let [hours, minutes, seconds] = time.split(':').map(Number);
-                return hours * 3600 + minutes * 60 + seconds;
+            function filterBookedTimes(
+              allTimesArray,
+              userBookedStartTimesArray,
+              userBookedEndTimesArray,
+              usersBookedStartTimesForThisEvent,
+              usersBookedEndTimesForThisEvent,
+              maxBookings
+            ) {
+              // Function to convert time string "HH:MM" to minutes since midnight
+              function timeToMinutes(time) {
+                let [hours, minutes] = time.split(":").map(Number);
+                return hours * 60 + minutes;
               }
 
-              // Function to convert seconds since midnight back to time string "HH:MM:SS"
-              function secondsToTime(seconds) {
-                let hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
-                let mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-                let secs = (seconds % 60).toString().padStart(2, '0');
-                return `${hours}:${mins}:${secs}`;
+              // Function to convert minutes since midnight back to time string "HH:MM"
+              function minutesToTime(minutes) {
+                let hours = Math.floor(minutes / 60).toString().padStart(2, "0");
+                let mins = (minutes % 60).toString().padStart(2, "0");
+                return `${hours}:${mins}`;
               }
 
-              // Convert all times to seconds
-              let allTimesInSeconds = allTimesArray.map(timeToSeconds);
-              let bookedStartTimesInSeconds = userBookedStartTimesArray.map(item => timeToSeconds(item.eventStartTime));
-              let bookedEndTimesInSeconds = userBookedEndTimesArray.map(item => timeToSeconds(item.eventEndTime));
-              let eventStartTimesInSeconds = usersBookedStartTimesForThisEvent.map(item => timeToSeconds(item.eventStartTime));
-              let eventEndTimesInSeconds = usersBookedEndTimesForThisEvent.map(item => timeToSeconds(item.eventEndTime));
+              // Convert all times to minutes
+              let allTimesInMinutes = allTimesArray.map(timeToMinutes);
+              let bookedStartTimesInMinutes = userBookedStartTimesArray.map((item) =>
+                timeToMinutes(item.eventStartTime)
+              );
+              let bookedEndTimesInMinutes = userBookedEndTimesArray.map((item) =>
+                timeToMinutes(item.eventEndTime)
+              );
+              let eventStartTimesInMinutes = usersBookedStartTimesForThisEvent.map((item) =>
+                timeToMinutes(item.eventStartTime)
+              );
+              let eventEndTimesInMinutes = usersBookedEndTimesForThisEvent.map((item) =>
+                timeToMinutes(item.eventEndTime)
+              );
 
               // Initialize a dictionary to keep track of bookings
               let bookingCount = {};
-              usersBookedStartTimesForThisEvent.forEach(item => {
+              usersBookedStartTimesForThisEvent.forEach((item) => {
                 if (bookingCount[item.eventStartTime]) {
                   bookingCount[item.eventStartTime]++;
                 } else {
@@ -1309,8 +1540,8 @@ export class CreateMeetingComponentComponent implements OnInit {
 
               // Function to check if a time is within any booked interval
               function isBooked(time) {
-                for (let i = 0; i < bookedStartTimesInSeconds.length; i++) {
-                  if (time >= bookedStartTimesInSeconds[i] && time < bookedEndTimesInSeconds[i]) {
+                for (let i = 0; i < bookedStartTimesInMinutes.length; i++) {
+                  if (time >= bookedStartTimesInMinutes[i] && time < bookedEndTimesInMinutes[i]) {
                     return true;
                   }
                 }
@@ -1319,22 +1550,26 @@ export class CreateMeetingComponentComponent implements OnInit {
 
               // Function to check if a time is within any fully booked interval for the event
               function isFullyBookedForEvent(time) {
-                for (let i = 0; i < eventStartTimesInSeconds.length; i++) {
-                  if (bookingCount[secondsToTime(eventStartTimesInSeconds[i])] >= maxBookings &&
-                    time >= eventStartTimesInSeconds[i] && time < eventEndTimesInSeconds[i]) {
+                for (let i = 0; i < eventStartTimesInMinutes.length; i++) {
+                  if (
+                    bookingCount[minutesToTime(eventStartTimesInMinutes[i])] >= maxBookings &&
+                    time >= eventStartTimesInMinutes[i] &&
+                    time < eventEndTimesInMinutes[i]
+                  ) {
                     return true;
                   }
                 }
                 return false;
-
               }
 
               // Filter out the times that are within the booked intervals or fully booked intervals for the event
-              let filteredTimesInSeconds = allTimesInSeconds.filter(time => !isBooked(time) && !isFullyBookedForEvent(time));
+              let filteredTimesInMinutes = allTimesInMinutes.filter(
+                (time) => !isBooked(time) && !isFullyBookedForEvent(time)
+              );
 
-              // Convert the filtered times back to "HH:MM:SS" format
-              return filteredTimesInSeconds.map(timeInSeconds => {
-                let time = secondsToTime(timeInSeconds);
+              // Convert the filtered times back to "HH:MM" format
+              return filteredTimesInMinutes.map((timeInMinutes) => {
+                let time = minutesToTime(timeInMinutes);
                 let remainingBookings = maxBookings - (bookingCount[time] || 0);
                 console.log("remainingBookings ", remainingBookings);
 
@@ -1342,22 +1577,30 @@ export class CreateMeetingComponentComponent implements OnInit {
               });
             }
 
-            let usersAvailaibleTimes = filterBookedTimes(allTimesArray, usersBookedTimes, usersBookedEndTimes, usersBookedStartTimesForThisEvent, usersBookedEndTimesForThisEvent, this.noOfBookingsAllowedForAParticularTimeInGrpEvent);
-            console.log("line 1344",usersAvailaibleTimes);
+            let usersAvailaibleTimes = filterBookedTimes(
+              allTimesArray,
+              usersBookedTimes,
+              usersBookedEndTimes,
+              usersBookedStartTimesForThisEvent,
+              usersBookedEndTimesForThisEvent,
+              this.noOfBookingsAllowedForAParticularTimeInGrpEvent
+            );
+            console.log("line 1344", usersAvailaibleTimes);
             console.log(usersBookedStartTimesForThisEvent, usersBookedEndTimesForThisEvent);
-
 
             // =============================
 
             if (this.minTimeReqBeforeScheduling.status == true) {
-              this.setTimesAsPerMinNotice(usersAvailaibleTimes, selectedDate)
-            }
-            else {
-              this.userAvailaibleArray = usersAvailaibleTimes
+              this.setTimesAsPerMinNotice(usersAvailaibleTimes, selectedDate);
+            } else {
+              this.userAvailaibleArray = usersAvailaibleTimes;
+              this.userAvailaibleArray24 = usersAvailaibleTimes
+              this.convertTo12HourFormat();
             }
 
             console.log("this.userAvailaibleArray ", this.userAvailaibleArray);
           }
+
 
 
 
@@ -1555,6 +1798,24 @@ export class CreateMeetingComponentComponent implements OnInit {
 
     console.log("this.minTimeReqBeforeScheduling ", this.minTimeReqBeforeScheduling);
 
+       // todays date and time starts
+       let todaysdate = new Date();
+       console.log(todaysdate);
+       const day = String(todaysdate.getDate()).padStart(2, '0');
+       const month = String(todaysdate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+       const year = todaysdate.getFullYear();
+       todaysdate = `${year}-${month}-${day}`; // e.g., "2024-07-25"
+       console.log("todaysdate == this.dateSelected", todaysdate == this.dateSelected);
+   
+   
+       const now = new Date();
+       const hours = String(now.getHours()).padStart(2, '0');
+       const minutes = String(now.getMinutes()).padStart(2, '0');
+       let currentTime = `${hours}:${minutes}`;
+       console.log("currentTime ", currentTime);
+   
+       // todays date and time ends
+
 
     if (this.minTimeReqBeforeScheduling.status) {
       console.log("this.minTimeReqBeforeScheduling.status is true ");
@@ -1599,7 +1860,15 @@ export class CreateMeetingComponentComponent implements OnInit {
         }
         // console.log("timesArray ", timesArray);
 
+        if (todaysdate == this.dateSelected) {
+          timesArray = timesArray.filter(time => time >= currentTime)
+        }
+        console.log('newArr ', timesArray);
+
+
         this.userAvailaibleArray = timesArray
+        this.userAvailaibleArray24 = timesArray
+        this.convertTo12HourFormat();
       }
       else if (this.minTimeReqBeforeScheduling.mins.status) {
 
@@ -1638,7 +1907,14 @@ export class CreateMeetingComponentComponent implements OnInit {
         }
         // console.log("timesArray ", timesArray);
 
+        if (todaysdate == this.dateSelected) {
+          timesArray = timesArray.filter(time => time >= currentTime)
+        }
+        console.log('newArr ', timesArray);
+
         this.userAvailaibleArray = timesArray
+        this.userAvailaibleArray24 = timesArray
+        this.convertTo12HourFormat();
       }
       else {
         console.log("this.minTimeReqBeforeScheduling.days.status is true");
@@ -1675,7 +1951,14 @@ export class CreateMeetingComponentComponent implements OnInit {
         }
         // console.log("timesArray ", timesArray);
 
+        if (todaysdate == this.dateSelected) {
+          timesArray = timesArray.filter(time => time >= currentTime)
+        }
+        console.log('newArr ', timesArray);
+
         this.userAvailaibleArray = timesArray
+        this.userAvailaibleArray24 = timesArray
+        this.convertTo12HourFormat();
       }
     }
 
@@ -1798,11 +2081,30 @@ export class CreateMeetingComponentComponent implements OnInit {
   // --------------------------------------------------
 
   nextButton(evName, evDurHrs, evDurMins, oneTime) {
+
+    console.log('oneTime ', oneTime);
+
+    let time24
+    if (this.evType == 'One-on-One') {
+      time24 = this.userAvailaibleArray24[this.userAvailaibleArray.indexOf(oneTime)];
+      console.log('Selected time in 24-hour format:', time24);
+    }
+    else {
+      const index = this.userAvailaibleArray.findIndex(item => item.time === oneTime);
+      console.log("index ", index);
+
+      time24 = index !== -1 ? this.userAvailaibleArray24[index]['time'] : null; // Handle case where time is not found
+
+
+      // time24 = this.userAvailaibleArray24[this.userAvailaibleArray.indexOf(oneTime)];
+      console.log('Selected time in 24-hour format:', time24);
+    }
+
     localStorage.setItem("nameWhoseCalendar", this.nameWhoseCalendar)
     localStorage.setItem("evName", evName)
     localStorage.setItem("evDurHrs", evDurHrs)//  0
     localStorage.setItem("evDurMins", evDurMins) //30
-    localStorage.setItem("oneTime", oneTime) //09:00:00
+    localStorage.setItem("oneTime", time24) //09:00:00
     localStorage.setItem("day", this.selectedDayName)
     localStorage.setItem("date", this.dateSelected)
     localStorage.setItem("month", this.selectedMonth)
@@ -1811,10 +2113,12 @@ export class CreateMeetingComponentComponent implements OnInit {
     localStorage.setItem("lastNameRequired", this.lastNameRequired)
     localStorage.setItem('redirectTo', JSON.stringify(this.redirectTo))
 
-    console.log(oneTime[0], oneTime[1], oneTime[3], oneTime[4]);
+    console.log("since time24 is ", time24);
 
-    let hrs = Number(oneTime[0] + oneTime[1]) //09
-    let mins = Number(oneTime[3] + oneTime[4]) //00
+    console.log(time24[0], time24[1], time24[3], time24[4]);
+
+    let hrs = Number(time24[0] + time24[1]) //09
+    let mins = Number(time24[3] + time24[4]) //00
 
     console.log("hrs, mins", hrs, mins);
 
@@ -1835,37 +2139,37 @@ export class CreateMeetingComponentComponent implements OnInit {
     let endTime;
     if (endTimeMins == 0) {
       if (endTimeHrs == 0) {
-        endTime = `00:00:00`
+        endTime = `00:00`
       }
       else if (endTimeHrs < 10) {
-        endTime = `0${endTimeHrs}:00:00`
+        endTime = `0${endTimeHrs}:00`
       }
       else {
-        endTime = `${endTimeHrs}:00:00`
+        endTime = `${endTimeHrs}:00`
       }
       // endTime = `${endTimeHrs}:00:00`
     }
     else if (endTimeMins < 10) {
       if (endTimeHrs == 0) {
-        endTime = `00:0${endTimeMins}:00`
+        endTime = `00:0${endTimeMins}`
       }
       else if (endTimeHrs < 10) {
-        endTime = `0${endTimeHrs}:0${endTimeMins}:00`
+        endTime = `0${endTimeHrs}:0${endTimeMins}`
       }
       else {
-        endTime = `${endTimeHrs}:0${endTimeMins}:00`
+        endTime = `${endTimeHrs}:0${endTimeMins}`
       }
       // endTime = `${endTimeHrs}:0${endTimeMins}:00`
     }
     else {
       if (endTimeHrs == 0) {
-        endTime = `00:${endTimeMins}:00`
+        endTime = `00:${endTimeMins}`
       }
       else if (endTimeHrs < 10) {
-        endTime = `0${endTimeHrs}:${endTimeMins}:00`
+        endTime = `0${endTimeHrs}:${endTimeMins}`
       }
       else {
-        endTime = `${endTimeHrs}:${endTimeMins}:00`
+        endTime = `${endTimeHrs}:${endTimeMins}`
       }
       // endTime = `${endTimeHrs}:${endTimeMins}:00`
     }

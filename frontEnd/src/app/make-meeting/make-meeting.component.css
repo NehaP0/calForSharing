@@ -19,6 +19,10 @@
   padding: 0;
 }
 
+.icons {
+  vertical-align: middle;
+}
+
 #content {
   /* background-color: white; */
 
@@ -55,9 +59,14 @@
   color: #1671fb;
 }
 
+.leftSideDetails {
+  margin-bottom: 15px;
+}
+
 #eventName {
   /* color: #1a1a1a; */
   font-size: 25px;
+  margin-bottom: 40px;
 }
 
 ng-icon {
@@ -85,7 +94,7 @@ form>button {
   display: block;
   margin-top: 10px;
   border-radius: 50px;
-  color : white
+  color: white
 }
 
 #addGuests {
@@ -121,15 +130,15 @@ form label {
   color: #cf6868;
 }
 
-#addGuestsDiv{
-  margin-bottom : 5px
+#addGuestsDiv {
+  margin-bottom: 5px
 }
 
 .question {
   font-weight: bold;
 }
 
-#loadingDiv{
+#loadingDiv {
   z-index: 1;
   margin: auto;
   width: 40%;
@@ -138,7 +147,8 @@ form label {
   background-color: rgb(241, 237, 237);
   font-size: 18px;
 }
-#loadingDiv p{
+
+#loadingDiv p {
   margin: 0;
   padding: 0;
 }

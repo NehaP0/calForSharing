@@ -164,42 +164,42 @@ export class MakeMeetingComponent implements OnInit {
         };
 
         console.log("meet ", meet);
-        
+
         this.wait = true
         console.log("wait after validation ", this.wait);
 
         let foundUserInContactsArr = false
         let idOfInvitee = ""
-        for(let i=0; i<this.contactsArr.length; i++){
-          if(this.contactsArr[i].emailID == userForm.value.Email){
+        for (let i = 0; i < this.contactsArr.length; i++) {
+          if (this.contactsArr[i].emailID == userForm.value.Email) {
             foundUserInContactsArr = true
             idOfInvitee = this.contactsArr[i]._id
             break;
           }
         }
         console.log("foundUserInContactsArr ", foundUserInContactsArr, "idOfInvitee ", idOfInvitee);
-        
-        if(foundUserInContactsArr == false){
+
+        if (foundUserInContactsArr == false) {
           idOfInvitee = (Math.floor(Math.random() * 10000000000000001).toString())
         }
-        
+
         console.log("idOfInvitee ", idOfInvitee);
-        
+
         let usersFullName = ""
-        if(userForm.value.LastName){
+        if (userForm.value.LastName) {
           usersFullName = `${meet.user} ${meet.userSurname}`
         }
-        else{
+        else {
           usersFullName = meet.user
         }
 
         // alert('Please wait...')
 
         // uncomment below
-        
+
         this.apiService.scheduleMeetBymakeMeetingPage(meet)
           .subscribe((response) => {
-            
+
             console.log(response);
             console.log("wait after result ", this.wait);
 
@@ -210,31 +210,31 @@ export class MakeMeetingComponent implements OnInit {
                 this.router.navigate(['/thankyou']);
               }
               else {
-                if(this.pasEvntDeetsToRedirectPg){
+                if (this.pasEvntDeetsToRedirectPg) {
                   let query
-                  if(meet.otherEmails.length == 0){
-                    
-                    if(meet.userSurname){
+                  if (meet.otherEmails.length == 0) {
+
+                    if (meet.userSurname) {
                       query = `assigned_to=${this.nameWhoseCalendar}&event_type_uuid=${this.evId}&event_type_name=${this.evName}&event_start_time=${this.date}T${this.startTime}&event_end_time=${this.date}T${this.endTime}&invitee_uuid=${idOfInvitee}&invitee_first_name=${meet.user}&invitee_last_name=${meet.userSurname}&invitee_email=${meet.userEmail}`
                     }
-                    else{
+                    else {
                       query = `assigned_to=${this.nameWhoseCalendar}&event_type_uuid=${this.evId}&event_type_name=${this.evName}&event_start_time=${this.date}T${this.startTime}&event_end_time=${this.date}T${this.endTime}&invitee_uuid=${idOfInvitee}&invitee_first_name=${meet.user}&invitee_email=${meet.userEmail}`
                     }
                   }
-                  else{
+                  else {
                     console.log('inside else, since there are guests');
                     let guestsStr = ""
-                    for(let i=0; i<meet.otherEmails.length; i++){
-                      if(meet.otherEmails[i]!="" && meet.otherEmails[i]!=" "){
-                        guestsStr+= `&guests=${meet.otherEmails[i]}`
+                    for (let i = 0; i < meet.otherEmails.length; i++) {
+                      if (meet.otherEmails[i] != "" && meet.otherEmails[i] != " ") {
+                        guestsStr += `&guests=${meet.otherEmails[i]}`
                       }
                     }
                     console.log("guestsStr ", guestsStr);
-                    
-                    if(meet.userSurname){
+
+                    if (meet.userSurname) {
                       query = `assigned_to=${this.nameWhoseCalendar}&event_type_uuid=${this.evId}&event_type_name=${this.evName}&event_start_time=${this.date}T${this.startTime}&event_end_time=${this.date}T${this.endTime}&invitee_uuid=${idOfInvitee}&invitee_first_name=${meet.user}&invitee_last_name=${meet.userSurname}&invitee_email=${meet.userEmail}${guestsStr}`
                     }
-                    else{
+                    else {
                       query = `assigned_to=${this.nameWhoseCalendar}&event_type_uuid=${this.evId}&event_type_name=${this.evName}&event_start_time=${this.date}T${this.startTime}&event_end_time=${this.date}T${this.endTime}&invitee_uuid=${idOfInvitee}&invitee_first_name=${meet.user}&invitee_email=${meet.userEmail}${guestsStr}`
                     }
                   }
@@ -247,7 +247,7 @@ export class MakeMeetingComponent implements OnInit {
                   window.location.href = link
                   console.log('link ', link);
                 }
-                else{
+                else {
                   this.wait = false
                   let link = this.redirectTo.externalUrl.link
                   window.location.href = link
@@ -260,10 +260,10 @@ export class MakeMeetingComponent implements OnInit {
           });
 
 
-          if(foundUserInContactsArr == false){
-            let contactObj = {name:usersFullName, emailID:meet.userEmail, _id : idOfInvitee}
-            this.apiService.patchContactsArr(this.emailId, contactObj)
-          }
+        if (foundUserInContactsArr == false) {
+          let contactObj = { name: usersFullName, emailID: meet.userEmail, _id: idOfInvitee }
+          this.apiService.patchContactsArr(this.emailId, contactObj)
+        }
 
 
         // uncomment above
