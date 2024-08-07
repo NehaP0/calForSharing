@@ -48,3 +48,6 @@ button {
     color: rgb(196, 2, 2);
     font-size: 15px;
 }
+ng-icon{
+    display: inline;
+}

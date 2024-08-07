@@ -39,6 +39,8 @@ export class CancellationPageComponent {
 
   cancelationReason = ""
   showWarning = false
+  startTime
+  endTime
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -91,7 +93,15 @@ export class CancellationPageComponent {
           this.start = reqMeet["start"]
           this.end = reqMeet["end"]
 
+          let startstr = this.start.split('T')[1]
+          startstr = startstr.split('+')[0]
+          console.log("startstr ", startstr);
+          this.startTime = `${startstr[0]}${startstr[1]}${startstr[2]}${startstr[3]}${startstr[4]}`
 
+          let endstr = this.end.split('T')[1]
+          endstr = endstr.split('+')[0]
+          console.log("endstr ", endstr);
+          this.endTime = `${endstr[0]}${endstr[1]}${endstr[2]}${endstr[3]}${endstr[4]}`
         }
       }
     })
@@ -129,6 +139,10 @@ export class CancellationPageComponent {
         found = true
         this.start = meetingsWtOthers[i]["start"]
         this.end = meetingsWtOthers[i]["end"]
+        
+
+        
+        
         break;
       }
     }

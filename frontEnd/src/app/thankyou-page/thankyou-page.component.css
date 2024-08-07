@@ -7,8 +7,12 @@
     height: 20vh;
     padding: 20px;
     border-radius: 20px;
+    padding-top: 5%;
 }
 #content{
     text-align: center;
 
+}
+h1{
+    font-size: 30px;
 }

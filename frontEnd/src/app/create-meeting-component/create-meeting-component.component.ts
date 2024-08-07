@@ -8,6 +8,11 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment-timezone';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import momentPlugin from '@fullcalendar/moment';
+import momentTimezonePlugin from '@fullcalendar/moment-timezone';
+import { HttpClient } from '@angular/common/http';
+import moment from 'moment-timezone';
 
 
 @Component({
@@ -57,7 +62,10 @@ export class CreateMeetingComponentComponent implements OnInit {
   allTimesArray = []
   showNext = false
   showNextFor = ""
-  showingIn24hr = true
+  showingIn24hr : Boolean
+
+  previousTimeZone = 'Asia/Calcutta';
+  selectedTimeZone = 'Asia/Calcutta'
 
   workingHrStart = ""
   workingHrEnd = ""
@@ -110,7 +118,8 @@ export class CreateMeetingComponentComponent implements OnInit {
 
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
-    plugins: [dayGridPlugin, interactionPlugin],
+    timeZone: this.selectedTimeZone,
+    plugins: [dayGridPlugin, interactionPlugin, momentPlugin, momentTimezonePlugin],
     headerToolbar: {
       left: 'prev',
       center: 'title',
@@ -138,7 +147,7 @@ export class CreateMeetingComponentComponent implements OnInit {
 
   // NEW END====
 
-  constructor(private apiService: APIService, private route: ActivatedRoute, private router: Router, private datePipe: DatePipe) {
+  constructor(private apiService: APIService, private route: ActivatedRoute, private router: Router, private datePipe: DatePipe, private http: HttpClient) {
     // this.subscription = this.apiService.userName$.subscribe((userName) => {
     //   this.userName = userName;
     //   console.log(userName)
@@ -199,6 +208,7 @@ export class CreateMeetingComponentComponent implements OnInit {
 
     this.cloduraBrandingReq = this.user.cloduraBranding;
     console.log("this.cloduraBrandingReq ", this.cloduraBrandingReq);
+    localStorage.setItem('cloduraBrandingReq', JSON.stringify(this.cloduraBrandingReq))
 
     for (let i = 0; i < this.user.eventLinks.length; i++) {
       if (this.user.eventLinks[i].linkEnd == this.evLinkEnd) {
@@ -245,26 +255,73 @@ export class CreateMeetingComponentComponent implements OnInit {
 
       // console.log("duration ",this.duration);  
     })
-
-
     this.getAllEventEditings()
-
-
   }
 
-  changeTimeFormat() {
-    console.log('changeTimeFormat called');
+  // convertAvailableTimesAccToTimeZone(times) {
+  //   return times.map(time => {
+  //     console.log(this.selectedTimeZone);
 
-    this.showingIn24hr = !this.showingIn24hr
-    if (this.showingIn24hr) {
-      this.userAvailaibleArray = this.userAvailaibleArray24
-    }
-    else {
-      this.userAvailaibleArray = this.userAvailaibleArray12;
-    }
-    console.log('since ', this.showingIn24hr, 'so ', this.userAvailaibleArray);
+  //     const fullDateTimeString = `${this.dateSelected}T${time}:00`;
 
-  }
+  //     // Use moment.tz to get the offset of the previous timezone dynamically
+  //     const momentWithOffset = moment.tz(fullDateTimeString, this.previousTimeZone);
+
+  //     const convertedTime = moment.tz(momentWithOffset, this.selectedTimeZone).format('HH:mm');
+  //     console.log(`Converted time: ${fullDateTimeString} to ${convertedTime}`);
+
+  //     return convertedTime;
+  //   });
+  // }
+
+  // onTimeZoneChange(event: Event) {
+  //   const selectElement = event.target as HTMLSelectElement;
+  //   const newTimeZone = selectElement.value;
+
+  //   this.previousTimeZone = this.selectedTimeZone;
+  //   this.selectedTimeZone = newTimeZone;
+
+  //   console.log('previousTimeZone ', this.previousTimeZone);
+  //   console.log('selectedTimeZone ', this.selectedTimeZone);
+
+  //   this.calendarOptions = {
+  //     ...this.calendarOptions,
+  //     timeZone: newTimeZone
+  //   };
+
+  //   const referenceDate = this.dateSelected; // Use the selected date as the reference date
+
+  //   this.userAvailaibleArray = this.convertAvailableTimesAccToTimeZone(this.userAvailaibleArray);
+  //   console.log('Updated available times:', this.userAvailaibleArray);
+
+  //   // Update the 12-hour format array as well
+  //   // this.convertTo12HourFormat();
+
+  //   if(!this.showingIn24hr){
+  //     this.convertTo12HourFormat
+  //   }
+
+
+  //   // // Update the displayed array according to the current format
+  //   // this.userAvailaibleArray = this.showingIn24hr ? this.userAvailaibleArray24 : this.userAvailaibleArray12;
+
+  //   // console.log('Updated available times:', this.userAvailaibleArray);
+
+  // }
+
+  // changeAvArrAsPerTimeFormat() {
+  //   console.log('changeAvArrAsPerTimeFormat called');
+
+  //   console.log('this.showingIn24hr ', this.showingIn24hr);
+    
+  //   if (this.showingIn24hr) {
+  //     this.userAvailaibleArray = this.userAvailaibleArray24
+  //   }
+  //   else {
+  //     this.userAvailaibleArray = this.userAvailaibleArray12;
+  //   }
+  //   console.log('since ', this.showingIn24hr, 'so ', this.userAvailaibleArray);
+  // }
 
   to12HourFormat(time: string): string {
     console.log("time ", time);
@@ -297,8 +354,14 @@ export class CreateMeetingComponentComponent implements OnInit {
     }
 
 
+    if (this.showingIn24hr) {
+      this.userAvailaibleArray = this.userAvailaibleArray24
+    }
+    else {
+      this.userAvailaibleArray = this.userAvailaibleArray12;
+    }
+    console.log('since ', this.showingIn24hr, 'so ', this.userAvailaibleArray);
   }
-
 
 
   assignValuesToEventDeets() {
@@ -327,14 +390,6 @@ export class CreateMeetingComponentComponent implements OnInit {
 
 
 
-
-  // this.evId = eventId
-  // localStorage.setItem("eventId", this.evId)
-
-
-
-
-
   // =======getsAllEventEditedOptions starts==================
 
   getAllEventEditings() {
@@ -358,10 +413,21 @@ export class CreateMeetingComponentComponent implements OnInit {
         this.textColor = reqEventObj['txtClr']
         this.btnAndLinkColor = reqEventObj['btnAndLnkClr']
 
+        console.log("since ", reqEventObj['timeFormat']);
+        
+        if(reqEventObj['timeFormat'] == "24hr"){
+          this.showingIn24hr = true
+        }
+        else{
+          this.showingIn24hr = false
+        }
+        console.log("hence ", this.showingIn24hr);
+        
+
         localStorage.setItem("backGroundcolor", this.backGroundcolor)
         localStorage.setItem("textColor", this.textColor)
         localStorage.setItem("btnAndLinkColor", this.btnAndLinkColor)
-
+        localStorage.setItem("timeFormat", reqEventObj['timeFormat'])
 
         // ===========================
       }
@@ -915,6 +981,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   // ---------------onDateClick new starts---------------
 
   onDateClick(res: any) {
+    
 
     this.displayTimeDiv = true
     console.log('Clicked on date : ' + res.dateStr); //2024-02-13
@@ -1798,23 +1865,23 @@ export class CreateMeetingComponentComponent implements OnInit {
 
     console.log("this.minTimeReqBeforeScheduling ", this.minTimeReqBeforeScheduling);
 
-       // todays date and time starts
-       let todaysdate = new Date();
-       console.log(todaysdate);
-       const day = String(todaysdate.getDate()).padStart(2, '0');
-       const month = String(todaysdate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-       const year = todaysdate.getFullYear();
-       todaysdate = `${year}-${month}-${day}`; // e.g., "2024-07-25"
-       console.log("todaysdate == this.dateSelected", todaysdate == this.dateSelected);
-   
-   
-       const now = new Date();
-       const hours = String(now.getHours()).padStart(2, '0');
-       const minutes = String(now.getMinutes()).padStart(2, '0');
-       let currentTime = `${hours}:${minutes}`;
-       console.log("currentTime ", currentTime);
-   
-       // todays date and time ends
+    // todays date and time starts
+    let todaysdate = new Date();
+    console.log(todaysdate);
+    const day = String(todaysdate.getDate()).padStart(2, '0');
+    const month = String(todaysdate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = todaysdate.getFullYear();
+    todaysdate = `${year}-${month}-${day}`; // e.g., "2024-07-25"
+    console.log("todaysdate == this.dateSelected", todaysdate == this.dateSelected);
+
+
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    let currentTime = `${hours}:${minutes}`;
+    console.log("currentTime ", currentTime);
+
+    // todays date and time ends
 
 
     if (this.minTimeReqBeforeScheduling.status) {
@@ -2085,16 +2152,28 @@ export class CreateMeetingComponentComponent implements OnInit {
     console.log('oneTime ', oneTime);
 
     let time24
+    let startTimeWdTimeZoneOffset
+    let endTimeWdTimeZoneOffset
+
     if (this.evType == 'One-on-One') {
       time24 = this.userAvailaibleArray24[this.userAvailaibleArray.indexOf(oneTime)];
       console.log('Selected time in 24-hour format:', time24);
+
+      startTimeWdTimeZoneOffset = `${this.dateSelected}T${time24}:00`
+      startTimeWdTimeZoneOffset = moment.tz(startTimeWdTimeZoneOffset, this.selectedTimeZone).format();
+      console.log('startTimeWdTimeZoneOffset ', startTimeWdTimeZoneOffset);
+
     }
     else {
       const index = this.userAvailaibleArray.findIndex(item => item.time === oneTime);
       console.log("index ", index);
 
       time24 = index !== -1 ? this.userAvailaibleArray24[index]['time'] : null; // Handle case where time is not found
+      console.log('time24 ', time24);
 
+      startTimeWdTimeZoneOffset = `${this.dateSelected}T${time24}:00`
+      startTimeWdTimeZoneOffset = moment.tz(startTimeWdTimeZoneOffset, this.selectedTimeZone).format();
+      console.log('startTimeWdTimeZoneOffset ', startTimeWdTimeZoneOffset);
 
       // time24 = this.userAvailaibleArray24[this.userAvailaibleArray.indexOf(oneTime)];
       console.log('Selected time in 24-hour format:', time24);
@@ -2112,6 +2191,8 @@ export class CreateMeetingComponentComponent implements OnInit {
     localStorage.setItem("allowInviteesToAddGuests", this.allowInviteesToAddGuests)
     localStorage.setItem("lastNameRequired", this.lastNameRequired)
     localStorage.setItem('redirectTo', JSON.stringify(this.redirectTo))
+    localStorage.setItem('startTimeWdTimeZoneOffset', startTimeWdTimeZoneOffset)
+    localStorage.setItem('selectedTimeZone', this.selectedTimeZone)
 
     console.log("since time24 is ", time24);
 
@@ -2174,9 +2255,14 @@ export class CreateMeetingComponentComponent implements OnInit {
       // endTime = `${endTimeHrs}:${endTimeMins}:00`
     }
 
+    endTimeWdTimeZoneOffset = `${this.dateSelected}T${endTime}:00`
+    endTimeWdTimeZoneOffset = moment.tz(endTimeWdTimeZoneOffset, this.selectedTimeZone).format();
+    console.log('endTimeWdTimeZoneOffset ', endTimeWdTimeZoneOffset);
 
 
     localStorage.setItem("endTime", endTime)
+    localStorage.setItem('endTimeWdTimeZoneOffset', endTimeWdTimeZoneOffset)
+
     this.router.navigate(['/makeMeeting'])
 
   }

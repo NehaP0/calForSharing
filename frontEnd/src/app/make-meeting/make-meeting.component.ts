@@ -21,12 +21,17 @@ export class MakeMeetingComponent implements OnInit {
   evType = localStorage.getItem('evType');
   evDurHrs = localStorage.getItem('evDurHrs');
   evDurMins = localStorage.getItem('evDurMins');
+  // selectedTimeZone = localStorage.getItem('selectedTimeZone')
+  selectedTimeZone = 'Indian Standard Time'
   startTime = localStorage.getItem('oneTime');
+  startTimeWdTimeZoneOffset = localStorage.getItem('startTimeWdTimeZoneOffset')
   endTime = localStorage.getItem('endTime');
+  endTimeWdTimeZoneOffset = localStorage.getItem('endTimeWdTimeZoneOffset')
   day = localStorage.getItem('day');
   month = localStorage.getItem('month');
   date = localStorage.getItem('date');
   contactsArr = JSON.parse(localStorage.getItem('contactsArr'))
+  cloduraBrandingReq = JSON.parse(localStorage.getItem('cloduraBrandingReq'))
 
   backGroundcolor: string = localStorage.getItem('backGroundcolor')
   textColor: string = localStorage.getItem("textColor")
@@ -48,8 +53,8 @@ export class MakeMeetingComponent implements OnInit {
   wait = false
   showWarning = false
 
-  ngOnInit() {
-
+  ngOnInit() {   
+    
 
     if (this.evType == 'One-on-One') {
       this.oneOnOne = true;
@@ -150,8 +155,8 @@ export class MakeMeetingComponent implements OnInit {
 
         let meet = {
           title: this.evName,
-          start: `${this.date}T${this.startTime}`,
-          end: `${this.date}T${this.endTime}`,
+          start: this.startTimeWdTimeZoneOffset,
+          end: this.endTimeWdTimeZoneOffset,
           user: userForm.value.Name,
           userEmail: userForm.value.Email,
           otherEmails: otherEmails,

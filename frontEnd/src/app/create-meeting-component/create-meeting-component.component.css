@@ -11,11 +11,14 @@
     background-color: transparent;
     /* Transparent background */
 }
-.btnToSwitchTime{
+.btnToSwitchTime, #timeZones{
     margin-top: 20px;
     /* margin-left: 20px; */
     padding:10px;
     border-radius: 10px;
+}
+#timeZones{
+    width:45%
 }
 
 #avatarDiv {
@@ -36,65 +39,18 @@
 /* justify-content: space-evenly; 
 } */
 #timeZonesDiv{
-    width:50px;
+    /* width:50px; */
 }
 #timeZones{
-    float: right;
-    width:100%;
+    /* float: right;
+    width:100%; */
 }
 full-calendar {
     /* margin: auto; */
     /* border: 1px solid blue; */
 }
 
-::ng-deep #calendar {
-    border: none;
-}
 
-::ng-deep #calendar .fc-col-header-cell-cushion {
-    padding-bottom: 10px;
-}
-
-::ng-deep .fc .fc-daygrid-day-frame {
-    display: flex !important;
-    justify-content: center !important;
-}
-
-::ng-deep #calendar .fc-daygrid-day,
-::ng-deep #calendar .fc-col-header-cell {
-    border: none;
-}
-
-::ng-deep #calendar .fc-day-past a.fc-daygrid-day-number {
-    /* background-color: red; */
-    color: grey !important;
-    /* border: 1px solid red; */
-}
-
-
-
-::ng-deep #calendar a.fc-daygrid-day-number {
-    font-size: 15px !important;
-    /* font-weight: bold !important; */
-    font-family: sans-serif;
-    /* font-family: cursive; */
-    /* background-color: rgb(244, 250, 253); */
-    /* margin: 2px; */
-    /* border-radius: 50px;*/
-    /* border: 1px solid red; */
-
-}
-
-/* .fc .fc-scrollgrid-liquid */
-::ng-deep .fc .fc-scrollgrid-liquid,
-::ng-deep .fc .fc-scrollgrid-liquid td,
-::ng-deep .fc .fc-scrollgrid-liquid th {
-    border: none;
-}
-
-::ng-deep #calendar a.fc-daygrid-day-number:hover {
-    cursor: pointer;
-}
 
 /* .fc-daygrid-day-top{
     border: 2px solid red;
@@ -232,6 +188,7 @@ full-calendar {
     text-align: center;
     padding-top: 30px;
     opacity: 100;
+  
 }
 
 #belowGreyStrip>:nth-child(1) {
@@ -250,6 +207,9 @@ full-calendar {
     justify-content: space-around;
     /* color: #1A1A1A9C; */
     font-weight: bold;
+
+    /* border: 1px solid red; */
+    margin-bottom: 30px;
 }
 
 #timeAndLocation div {
@@ -347,7 +307,54 @@ ng-icon {
 
 /* -------MontCalendar starts------------- */
 
+::ng-deep #calendar {
+    border: none;
+}
 
+::ng-deep #calendar .fc-col-header-cell-cushion {
+    padding-bottom: 10px;
+}
+
+::ng-deep .fc .fc-daygrid-day-frame {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+::ng-deep #calendar .fc-daygrid-day,
+::ng-deep #calendar .fc-col-header-cell {
+    border: none;
+}
+
+::ng-deep #calendar .fc-day-past a.fc-daygrid-day-number {
+    /* background-color: red; */
+    color: grey !important;
+    /* border: 1px solid red; */
+}
+
+
+
+::ng-deep #calendar a.fc-daygrid-day-number {
+    font-size: 15px !important;
+    /* font-weight: bold !important; */
+    font-family: sans-serif;
+    /* font-family: cursive; */
+    /* background-color: rgb(244, 250, 253); */
+    /* margin: 2px; */
+    /* border-radius: 50px;*/
+    /* border: 1px solid red; */
+
+}
+
+/* .fc .fc-scrollgrid-liquid */
+::ng-deep .fc .fc-scrollgrid-liquid,
+::ng-deep .fc .fc-scrollgrid-liquid td,
+::ng-deep .fc .fc-scrollgrid-liquid th {
+    border: none;
+}
+
+::ng-deep #calendar a.fc-daygrid-day-number:hover {
+    cursor: pointer;
+}
 ::ng-deep #calendar .fc-toolbar-title {
     font-size: 15px;
 }

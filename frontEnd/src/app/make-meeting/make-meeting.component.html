@@ -2,8 +2,9 @@
 <div id="main">
   <div *ngIf="wait" id="waitBox">
     <h3>Please wait...</h3>
-  </div>
-  <div id="content" [ngStyle]="{'background-color': backGroundcolor, 'color':textColor}">
+  </div> 
+    
+    <div id="content" [ngStyle]="{'background-color': backGroundcolor, 'color':textColor}">
     <div id="leftDiv">
       <!-- <ng-icon name="bootstrapArrowLeft" (click)="backBtn()"></ng-icon> -->
       <p>{{ nameWhoseCalendar }}</p>
@@ -23,10 +24,16 @@
           date[9] }},</span><span *ngIf="date"> {{ date[0] }}{{ date[1] }}{{ date[2] }}{{ date[3] }}</span>
       </p>
       <p class="leftSideDetails">
-        <ng-icon class="icons" name="heroGlobeAsiaAustralia"></ng-icon><span> India Standard Time</span>
+        <ng-icon class="icons" name="heroGlobeAsiaAustralia"></ng-icon><span>{{selectedTimeZone}}</span>
       </p>
     </div>
     <div id="rightDiv">
+
+
+        <div class="powered-by-badge" *ngIf="cloduraBrandingReq">
+          <div id="poweredBy">Powered by <div id="clodura">Clodura.AI</div> </div>
+        </div>
+
       <h3>Enter Details</h3>
 
       <form #userForm="ngForm" (submit)="formSubmit(userForm)">

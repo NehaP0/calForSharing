@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { FullCalendarModule } from '@fullcalendar/angular';
 // import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin
+ 
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -39,6 +40,8 @@ import { CancelConfirmedComponent } from './cancel-confirmed/cancel-confirmed.co
 import { OopsComponent } from './oops/oops.component';
 import { ReschedulingComponent } from './rescheduling/rescheduling.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+
+
 
 
 @NgModule({
