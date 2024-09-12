@@ -53,8 +53,8 @@ export class MakeMeetingComponent implements OnInit {
   wait = false
   showWarning = false
 
-  ngOnInit() {   
-    
+  ngOnInit() {
+
 
     if (this.evType == 'One-on-One') {
       this.oneOnOne = true;
@@ -209,6 +209,7 @@ export class MakeMeetingComponent implements OnInit {
             console.log("wait after result ", this.wait);
 
             if (response['message'] == 'Meeting scheduled successfully. A calendar invitation will be mailed to the attendees.') {
+              // this.router.navigate(['/thankyou']);
 
               if (this.redirectTo.confirmationPage.status == true) {
                 this.wait = false
@@ -245,7 +246,7 @@ export class MakeMeetingComponent implements OnInit {
                   }
                   // assigned_to=Clodura.AI&event_type_uuid=103dba2d-2879-4693-98bf-229f6a5b77b8&event_type_name=test&event_start_time=2024-07-11T12%3A00%3A00%2B05%3A30&event_end_time=2024-07-11T12%3A30%3A00%2B05%3A30&invitee_uuid=4a4af215-7b7e-4f37-a566-47a9ff84e377&invitee_first_name=Neha&invitee_last_name=Phadtare&invitee_email=nehaphadtare334%40gmail.com
                   // ?assigned_to=Clodura.AI&event_type_uuid=103dba2d-2879-4693-98bf-229f6a5b77b8&event_type_name=test&event_start_time=2024-07-17T10%3A00%3A00%2B05%3A30&event_end_time=2024-07-17T10%3A30%3A00%2B05%3A30&invitee_uuid=0a2eebaa-c910-4caf-a1aa-7b17f48f5356&invitee_first_name=Neha&invitee_last_name=p&invitee_email=nehaphadtare334%40gmail.com&guests%5B%5D=nehaphadtare443%40gmail.com&guests%5B%5D=neha.phadtare%40clodura.ai
-                  // ?assigned_to=Clodura.AI&event_type_uuid=103dba2d-2879-4693-98bf-229f6a5b77b8&event_type_name=test&event_start_time=2024-07-17T10%3A00%3A00%2B05%3A30&event_end_time=2024-07-17T10%3A30%3A00%2B05%3A30&invitee_uuid=00c08667-5324-4ab8-bbf9-c17b620313b9&invitee_first_name=Neha&invitee_last_name=Phadtare&invitee_email=nehaphadtare334%40gmail.com                
+                  // ?assigned_to=Clodura.AI&event_type_uuid=103dba2d-2879-4693-98bf-229f6a5b77b8&event_type_name=test&event_start_time=2024-07-17T10%3A00%3A00%2B05%3A30&event_end_time=2024-07-17T10%3A30%3A00%2B05%3A30&invitee_uuid=00c08667-5324-4ab8-bbf9-c17b620313b9&invitee_first_name=Neha&invitee_last_name=Phadtare&invitee_email=nehaphadtare334%40gmail.com
                   console.log('query ', query);
                   this.wait = false
                   let link = `${this.redirectTo.externalUrl.link}?${query}`

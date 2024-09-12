@@ -1,4 +1,4 @@
-// @ts-nocheck 
+// @ts-nocheck
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { APIService } from '../api.service';
 import { Subscription } from 'rxjs';
@@ -253,7 +253,7 @@ export class CreateMeetingComponentComponent implements OnInit {
       this.nonWorkingDays = this.selectedUserAvObj["nonWorkingDays"]
       console.log("nonWorkingDays ", this.selectedUserAvObj["nonWorkingDays"]);
 
-      // console.log("duration ",this.duration);  
+      // console.log("duration ",this.duration);
     })
     this.getAllEventEditings()
   }
@@ -313,7 +313,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   //   console.log('changeAvArrAsPerTimeFormat called');
 
   //   console.log('this.showingIn24hr ', this.showingIn24hr);
-    
+
   //   if (this.showingIn24hr) {
   //     this.userAvailaibleArray = this.userAvailaibleArray24
   //   }
@@ -413,8 +413,10 @@ export class CreateMeetingComponentComponent implements OnInit {
         this.textColor = reqEventObj['txtClr']
         this.btnAndLinkColor = reqEventObj['btnAndLnkClr']
 
+
+
         console.log("since ", reqEventObj['timeFormat']);
-        
+
         if(reqEventObj['timeFormat'] == "24hr"){
           this.showingIn24hr = true
         }
@@ -422,7 +424,7 @@ export class CreateMeetingComponentComponent implements OnInit {
           this.showingIn24hr = false
         }
         console.log("hence ", this.showingIn24hr);
-        
+
 
         localStorage.setItem("backGroundcolor", this.backGroundcolor)
         localStorage.setItem("textColor", this.textColor)
@@ -495,6 +497,8 @@ export class CreateMeetingComponentComponent implements OnInit {
 
 
     for (let i = 0; i < this.nonWorkingDays.length; i++) {
+      console.log("this.nonWorkingDays ", this.nonWorkingDays);
+
       if (dayOfWeek === this.nonWorkingDays[i]) {
         if (this.textColor == 'black' || this.textColor == '#000000') {
           return { html: `<div style="color: grey;">` + date + '</div>' };
@@ -531,7 +535,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   //   console.log('Clicked on date : ' + res.dateStr); //2024-02-13
 
   //   this.currentDate = new Date();
-  //   console.log("currentDate ", this.currentDate); //Mon Feb 19 2024 12:38:05 GMT+0530 (India Standard Time)create-meeting.component.ts:238 
+  //   console.log("currentDate ", this.currentDate); //Mon Feb 19 2024 12:38:05 GMT+0530 (India Standard Time)create-meeting.component.ts:238
   //   this.currentformattedDate = this.datePipe.transform(this.currentDate, 'yyyy-MM-dd'); //2024-02-19
   //   console.log("currentformattedDate ", this.currentformattedDate);
 
@@ -647,7 +651,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   //     // if (selectedDay === 1) {
   //     //   alert('User unavailable at this time!');
   //     //   return;
-  //     // } 
+  //     // }
 
 
   //     if (selectedNonWorkingDay == false) {
@@ -718,7 +722,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   //         // console.log("workingEndMinutes 281 ",workingEndMinutes, typeof workingEndMinutes);
 
   //         // console.log("this.duration.minutes 283 ",this.duration["minutes"], typeof this.duration["minutes"]);
-  //         // console.log("this.duration 284 ",this.duration, typeof this.duration);       
+  //         // console.log("this.duration 284 ",this.duration, typeof this.duration);
 
 
   //         workingStartHours = workingStartHours + Number(this.duration.hrs)
@@ -881,7 +885,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   //             //   break;
   //             // }
   //           }
-  //           else if (i == allTimesArray.length - 1) { //last time 
+  //           else if (i == allTimesArray.length - 1) { //last time
   //             console.log("satisfied last element ", allTimesArray[i]);
 
   //             found = true
@@ -895,7 +899,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   //             //                    16                30
 
   //             console.log("this.evDurHrs ", this.evDurHrs, "this.evDurMins ", this.evDurMins);
-  //             //                                 1                                   0     
+  //             //                                 1                                   0
 
 
   //             let hrNum = 0
@@ -981,7 +985,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   // ---------------onDateClick new starts---------------
 
   onDateClick(res: any) {
-    
+
 
     this.displayTimeDiv = true
     console.log('Clicked on date : ' + res.dateStr); //2024-02-13
@@ -1027,7 +1031,7 @@ export class CreateMeetingComponentComponent implements OnInit {
     else if (!returnOffindHowManyEventsAreAlreadyBookedFnctn) {
 
       this.currentDate = new Date();
-      console.log("currentDate ", this.currentDate); //Mon Feb 19 2024 12:38:05 GMT+0530 (India Standard Time)create-meeting.component.ts:238 
+      console.log("currentDate ", this.currentDate); //Mon Feb 19 2024 12:38:05 GMT+0530 (India Standard Time)create-meeting.component.ts:238
       this.currentformattedDate = this.datePipe.transform(this.currentDate, 'yyyy-MM-dd'); //2024-02-19
       console.log("currentformattedDate ", this.currentformattedDate);
 
@@ -1144,7 +1148,7 @@ export class CreateMeetingComponentComponent implements OnInit {
         // if (selectedDay === 1) {
         //   alert('User unavailable at this time!');
         //   return;
-        // } 
+        // }
 
 
         if (selectedNonWorkingDay == false) {
@@ -1213,7 +1217,7 @@ export class CreateMeetingComponentComponent implements OnInit {
             // console.log("workingEndMinutes 281 ",workingEndMinutes, typeof workingEndMinutes);
 
             // console.log("this.duration.minutes 283 ",this.duration["minutes"], typeof this.duration["minutes"]);
-            // console.log("this.duration 284 ",this.duration, typeof this.duration);       
+            // console.log("this.duration 284 ",this.duration, typeof this.duration);
 
 
             workingStartHours = workingStartHours + Number(this.duration.hrs)
@@ -1349,7 +1353,7 @@ export class CreateMeetingComponentComponent implements OnInit {
           //     if(allTimesArray[i]>= usersBookedTimes[j] && allTimesArray[i]< usersBookedEndTimes[j]){
           //       found = true
           //       break;
-          //     }  
+          //     }
           //   }
 
           //   if (found == false) {
@@ -1597,13 +1601,29 @@ export class CreateMeetingComponentComponent implements OnInit {
 
               // Initialize a dictionary to keep track of bookings
               let bookingCount = {};
+
+              console.log("usersBookedStartTimesForThisEvent ", usersBookedStartTimesForThisEvent);
+
+              // {
+//     "eventStartTime": "09:00:00+05:30",
+//     "bookedForWhichEvId": "66e279872254e904e0003093"
+// }
               usersBookedStartTimesForThisEvent.forEach((item) => {
+                item.eventStartTime = item.eventStartTime.split("+")[0]
+                item.eventStartTime = `${item.eventStartTime[0]}${item.eventStartTime[1]}${item.eventStartTime[2]}${item.eventStartTime[3]}${item.eventStartTime[4]}`
                 if (bookingCount[item.eventStartTime]) {
+                  console.log("in if");
+
                   bookingCount[item.eventStartTime]++;
                 } else {
+                  console.log("in else");
+
                   bookingCount[item.eventStartTime] = 1;
                 }
               });
+
+              console.log("bookingCount ", bookingCount);
+
 
               // Function to check if a time is within any booked interval
               function isBooked(time) {
@@ -1637,6 +1657,13 @@ export class CreateMeetingComponentComponent implements OnInit {
               // Convert the filtered times back to "HH:MM" format
               return filteredTimesInMinutes.map((timeInMinutes) => {
                 let time = minutesToTime(timeInMinutes);
+                console.log("time ", time);
+                // "09:00:00" ==> "09:00"
+                console.log("bookingCount ", bookingCount);
+
+                console.log("checking if same ", time, bookingCount[time]);
+
+
                 let remainingBookings = maxBookings - (bookingCount[time] || 0);
                 console.log("remainingBookings ", remainingBookings);
 
@@ -1756,7 +1783,7 @@ export class CreateMeetingComponentComponent implements OnInit {
         // this.calendarOptions.dayCellDidMount = this.customizeDayMount.bind(this)
       }
       // ----------for all days ends:
-      // ----------for only week days starts :  
+      // ----------for only week days starts :
 
       else if (this.allowInviteesToScheduleOn.days.onlyWeekDays) {
         let today = new Date();
@@ -2042,7 +2069,7 @@ export class CreateMeetingComponentComponent implements OnInit {
   //   for(let i=0; i<this.nonWorkingDays.length; i++){
   //     if(dayOfWeek == this.nonWorkingDays[i]){
   //       const container = document.createElement('div');
-  //       console.log("works");      
+  //       console.log("works");
   //       info.el.classList.add("makeDim")
   //       return { domNodes: [container] };
   //     }
@@ -2109,10 +2136,10 @@ export class CreateMeetingComponentComponent implements OnInit {
           //   this.Events = formattedMeetingsHide;
           //   console.log("Events ",this.Events);
           //   // this.trigger++;
-          // })    
+          // })
 
           // if(response['message'] == "Please login first."){
-          //   this.router.navigate(['/login'])  
+          //   this.router.navigate(['/login'])
 
           // }
         }
@@ -2206,7 +2233,7 @@ export class CreateMeetingComponentComponent implements OnInit {
     // workingStartHours = workingStartHours + Math.abs(workingStartMinutes/60)
     // workingStartMinutes = workingStartMinutes - 60*(Math.abs(workingStartMinutes/60))
 
-    let endTimeHrs = Number(hrs + Number(evDurHrs))  //9 + 0 = 9 
+    let endTimeHrs = Number(hrs + Number(evDurHrs))  //9 + 0 = 9
     let endTimeMins = Number(mins + Number(evDurMins)) //0 + 30 = 30
     console.log("endTimeHrs ", endTimeHrs, "endTimeMins ", endTimeMins);
 
